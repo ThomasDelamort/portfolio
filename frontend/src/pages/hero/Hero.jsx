@@ -3,7 +3,7 @@ import { Download, Mail } from "lucide-react";
 const Hero = () => {
   return (
     <>
-      <div className="max-w-6xl mx-auto px-4 mt-30">
+      <div className="max-w-5xl mx-auto px-4 mt-30">
         <div className="space-y-6">
           <p className="text-gray-400 text-2xl">I am</p>
           <h1 className="text-9xl font-extrabold bg-linear-to-r from-red-400 via-red-700 to-red-900 bg-clip-text text-transparent">
