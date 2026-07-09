@@ -13,8 +13,8 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="w-full border-b border-red-700/30 bg-[#0D0D0D]">
-      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
+    <nav className="w-full border-b border-red-700/30">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
         <a href="#" className="flex items-center gap-2 group">
           <SiSaturn className="w-7 h-7 mr-1 text-red-700 transition-colors group-hover:text-red-400" />
           <h3 className="text-2xl font-bold bg-linear-to-r from-red-700 via-red-500 to-red-400 bg-clip-text text-transparent">
@@ -27,7 +27,7 @@ const Navbar = () => {
             <a
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-gray-400 transition-colors hover:text-red-400"
+              className="text-sm font-medium text-gray-400 transition-colors hover:text-red-600"
             >
               {link.label}
             </a>
