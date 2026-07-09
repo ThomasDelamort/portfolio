@@ -18,7 +18,7 @@ const Hero = () => {
             pixel-perfect UI and I'm always looking for the next interesting
             problem to solve.
           </p>
-          <div className="flex mt-12 space-x-6">
+          <div className="flex mt-12 items-center space-x-6">
             <button className="flex items-center justify-center rounded-full bg-red-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-red-900/40 transition-all hover:bg-red-500 hover:shadow-red-700/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black">
               <Download className="mx-1.5" />
               Resume
