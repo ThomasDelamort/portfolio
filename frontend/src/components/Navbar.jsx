@@ -1,5 +1,5 @@
-import { ZodiacLeo, Menu } from "lucide-react";
 import { SiSaturn } from "react-icons/si";
+import { Menu } from "lucide-react";
 import { useState } from "react";
 
 const navLinks = [
