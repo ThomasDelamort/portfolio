@@ -3,7 +3,7 @@ import { Download, Mail, User } from "lucide-react";
 const Hero = () => {
   return (
     <>
-      <div className="max-w-5xl mx-auto px-4 mt-15">
+      <div className="max-w-5xl mx-auto px-4 mt-32">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left: text content */}
           <div className="space-y-6">
@@ -34,16 +34,31 @@ const Hero = () => {
 
           {/* Right: layered design + image placeholder */}
           <div className="relative flex items-center justify-center h-full">
-            {/* Decorative glow shape */}
-            <div className="absolute w-80 h-100 bg-linear-to-br from-red-700 via-red-600 to-red-900 rounded-full blur-3xl opacity-30" />
+            {/* Ambient outer glow */}
+            <div className="absolute w-md h-112 bg-linear-to-br from-red-700 via-orange-600 to-red-900 rounded-full blur-3xl opacity-30" />
 
-            {/* Image placeholder layered on top */}
-            <img
-              src="/UHO3t-A0-removebg-preview.png"
-              alt="Neal"
-              className="w-full h-full object-cover mb-10"
+            {/* Rotating accretion disk */}
+            <div
+              className="absolute w-md h-112 rounded-full animate-[spin_18s_linear_infinite] blur-md opacity-80"
+              style={{
+                background:
+                  "conic-gradient(from 0deg, transparent 0%, #fca311 15%, #e71d36 35%, transparent 50%, transparent 60%, #ff8c42 75%, #e71d36 90%, transparent 100%)",
+              }}
             />
-            {/* Replace above with: <img src="/your-photo.jpg" alt="Neal" className="w-full h-full object-cover" /> */}
+
+            {/* Thin bright photon ring */}
+            <div className="absolute w-90 h-90 rounded-full border-2 border-orange-400/70 shadow-[0_0_25px_5px_rgba(251,146,60,0.4)]" />
+
+            {/* Event horizon: photo with dark vignette */}
+            <div className="relative w-90 h-90 rounded-full overflow-hidden shadow-2xl shadow-black">
+              <img
+                src="/EGoZAqn0.jpg"
+                alt="Neal"
+                className="w-full h-full object-cover"
+              />
+              {/* Vignette to darken edges, like light bending into the horizon */}
+              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.85)_85%)]" />
+            </div>
           </div>
         </div>
       </div>
