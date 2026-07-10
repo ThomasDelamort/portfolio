@@ -48,9 +48,13 @@ const Hero = () => {
 
             <div className="relative w-120 h-120 rounded-full overflow-hidden shadow-2xl shadow-black">
               <img
-                src="/EGoZAqn0.jpg"
+                src="/wXA1QT-A.jpg"
                 alt="Neal"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover grayscale-30 contrast-125 brightness-90 saturate-150"
+                style={{
+                  filter:
+                    "grayscale(30%) contrast(1.25) brightness(0.9) saturate(1.5) sepia(20%) hue-rotate(-10deg)",
+                }}
               />
 
               <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.85)_85%)]" />
