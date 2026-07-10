@@ -3,7 +3,7 @@ import { Download, Mail, User } from "lucide-react";
 const Hero = () => {
   return (
     <>
-      <div className="max-w-5xl mx-auto px-4 mt-32">
+      <div className="max-w-6xl mx-auto px-4 mt-32">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left: text content */}
           <div className="space-y-6">
@@ -25,38 +25,34 @@ const Hero = () => {
                 <Download className="mx-1.5" />
                 Resume
               </button>
-              <button className="flex items-center justify-center rounded-full border-2 border-red-600 px-8 py-3 text-lg font-semibold text-red-500 transition-all hover:bg-red-600 hover:text-white hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black">
+              <button className="flex items-center justify-center rounded-full border-2 border-red-600 px-8 py-3 text-lg font-semibold text-red-500 transition-all hover:bg-red-400 hover:text-white hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black">
                 <Mail className="mx-1.5" />
                 Contact Me
               </button>
             </div>
           </div>
 
-          {/* Right: layered design + image placeholder */}
           <div className="relative flex items-center justify-center h-full">
             {/* Ambient outer glow */}
-            <div className="absolute w-md h-112 bg-linear-to-br from-red-700 via-orange-600 to-red-900 rounded-full blur-3xl opacity-30" />
+            <div className="absolute w-2xl h-150 bg-linear-to-br from-red-700 via-orange-600 to-red-900 rounded-full blur-3xl opacity-30" />
 
-            {/* Rotating accretion disk */}
             <div
-              className="absolute w-md h-112 rounded-full animate-[spin_18s_linear_infinite] blur-md opacity-80"
+              className="absolute w-xl h-150 rounded-full animate-[spin_18s_linear_infinite] blur-md opacity-80"
               style={{
                 background:
                   "conic-gradient(from 0deg, transparent 0%, #fca311 15%, #e71d36 35%, transparent 50%, transparent 60%, #ff8c42 75%, #e71d36 90%, transparent 100%)",
               }}
             />
 
-            {/* Thin bright photon ring */}
-            <div className="absolute w-90 h-90 rounded-full border-2 border-orange-400/70 shadow-[0_0_25px_5px_rgba(251,146,60,0.4)]" />
+            <div className="absolute w-120 h-120 rounded-full border-2 border-orange-400/70 shadow-[0_0_25px_5px_rgba(251,146,60,0.4)]" />
 
-            {/* Event horizon: photo with dark vignette */}
-            <div className="relative w-90 h-90 rounded-full overflow-hidden shadow-2xl shadow-black">
+            <div className="relative w-120 h-120 rounded-full overflow-hidden shadow-2xl shadow-black">
               <img
                 src="/EGoZAqn0.jpg"
                 alt="Neal"
                 className="w-full h-full object-cover"
               />
-              {/* Vignette to darken edges, like light bending into the horizon */}
+
               <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.85)_85%)]" />
             </div>
           </div>
