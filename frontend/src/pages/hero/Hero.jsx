@@ -3,8 +3,8 @@ import { Download, Mail, User } from "lucide-react";
 const Hero = () => {
   return (
     <>
-      <div className="w-full h-full bg-linear-to-b pb-52 bg-black via-zinc-950 to-red-950 border-b border-red-900">
-        <div className="max-w-6xl mx-auto px-4 mt-32">
+      <div className="w-full h-full bg-linear-to-b pb-52 bg-black via-zinc-950 to-red-950 border-b border-red-">
+        <div className="max-w-6xl mx-auto px-4 mt-28">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left: text content */}
             <div className="space-y-6">
@@ -33,21 +33,21 @@ const Hero = () => {
               </div>
             </div>
 
-            <div className="relative flex items-center justify-center h-full">
+            <div className="grid place-items-center h-full">
               {/* Ambient outer glow */}
-              <div className="absolute w-2xl h-150 bg-linear-to-br from-red-700 via-orange-600 to-red-900 rounded-full blur-3xl opacity-30" />
+              <div className="col-start-1 row-start-1 w-2xl h-150 bg-linear-to-br from-red-700 via-orange-600 to-red-900 rounded-full blur-3xl opacity-30" />
 
               <div
-                className="absolute w-xl h-150 rounded-full animate-[spin_18s_linear_infinite] blur-md opacity-80"
+                className="col-start-1 row-start-1 w-xl h-150 rounded-full animate-[spin_18s_linear_infinite] blur-md opacity-80"
                 style={{
                   background:
                     "conic-gradient(from 0deg, transparent 0%, #fca311 15%, #e71d36 35%, transparent 50%, transparent 60%, #ff8c42 75%, #e71d36 90%, transparent 100%)",
                 }}
               />
 
-              <div className="absolute w-120 h-120 rounded-full border-2 border-orange-400/70 shadow-[0_0_25px_5px_rgba(251,146,60,0.4)]" />
+              <div className="col-start-1 row-start-1 w-120 h-120 rounded-full border-2 border-orange-400/70 shadow-[0_0_25px_5px_rgba(251,146,60,0.4)]" />
 
-              <div className="relative w-120 h-120 rounded-full overflow-hidden shadow-2xl shadow-black">
+              <div className="col-start-1 row-start-1 w-120 h-120 rounded-full overflow-hidden shadow-2xl shadow-black">
                 <img
                   src="/wXA1QT-A.jpg"
                   alt="Neal"
@@ -57,8 +57,6 @@ const Hero = () => {
                       "grayscale(30%) contrast(1.25) brightness(0.9) saturate(1.5) sepia(20%) hue-rotate(-10deg)",
                   }}
                 />
-
-                <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.85)_85%)]" />
               </div>
             </div>
           </div>
