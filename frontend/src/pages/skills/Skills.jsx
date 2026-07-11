@@ -16,6 +16,7 @@ import {
   SiInsomnia,
   SiPostgresql,
   SiGnubash,
+  SiRender,
 } from "react-icons/si";
 import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
 import { TbBrandCpp } from "react-icons/tb";
@@ -58,6 +59,7 @@ const skillGroups = [
       { name: "Docker", icon: FaDocker },
       { name: "Insomnia", icon: SiInsomnia },
       { name: "Vite", icon: SiVite },
+      { name: "Render", icon: SiRender },
     ],
   },
   {
