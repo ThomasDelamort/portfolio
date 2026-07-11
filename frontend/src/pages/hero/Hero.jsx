@@ -3,7 +3,7 @@ import { Download, Mail, User, Code2 } from "lucide-react";
 const Hero = () => {
   return (
     <>
-      <div className="w-full h-full bg-linear-to-b py-20 bg-black via-zinc-950 to-red-950 border-b border-red-900">
+      <div className="w-full h-full bg-linear-to-t py-20 bg-black via-zinc-950 to-red-950">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left: text content */}

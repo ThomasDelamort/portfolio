@@ -14,7 +14,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="w-full border-b border-red-700/30">
+    <nav className="sticky top-0 z-50 w-full border-b border-red-700/30 bg-black/80 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
         <a href="#" className="flex items-center gap-2 group">
           <SiSaturn className="w-7 h-7 mr-1 text-red-700 transition-colors group-hover:text-red-400" />
