@@ -6,18 +6,27 @@ const projects = [
   {
     title: "Smart Library System",
     description:
-      "A short description of what this project does and the problem it solves for its users.",
-    image: "/project-placeholder-1.jpg",
-    tags: ["MongoDB", "ExpressJS", "React", "NodeJS"],
-    liveUrl: "#",
-    githubUrl: "#",
+      "A smart web-based library system for seamless borrowing, tracking, reservations, approvals, and administration.",
+    image: "/projects/L7_0lwHq.jpg",
+    tags: ["MongoDB", "ExpressJS", "React", "NodeJS", "AWS S3"],
+    liveUrl: "https://smartls.onrender.com/",
+    githubUrl: "https://github.com/ThomasDelamort/SmartLibrarySystem",
   },
   {
-    title: "Project Two",
-    description:
-      "A short description of what this project does and the problem it solves for its users.",
-    image: "/project-placeholder-2.jpg",
-    tags: ["Next.js", "TypeScript", "Tailwind"],
+    title: "Spotify Clone",
+    description: "The Fullstack Streaming App",
+    image: "/projects/image.png",
+    tags: [
+      "MongoDB",
+      "TailwindCSS",
+      "ExpressJS",
+      "ReactJS",
+      "NodeJS",
+      "Cloudinary",
+      "Clerk",
+      "TypeScript",
+      "JavaScript",
+    ],
     liveUrl: "#",
     githubUrl: "#",
   },
@@ -43,7 +52,7 @@ const Projects = () => {
 
   return (
     <section className="w-full bg-black py-24 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <span className="text-red-600 font-semibold text-sm tracking-widest uppercase">
           Fullstack
         </span>
@@ -53,12 +62,12 @@ const Projects = () => {
 
         <div className="relative">
           {/* Slide */}
-          <div className="rounded-2xl border border-red-700/30 bg-[#141414] overflow-hidden">
-            <div className="w-full aspect-video overflow-hidden bg-zinc-900">
+          <div className="rounded-2xl border-2 border-red-700/30 bg-[#141414] overflow-hidden">
+            <div className="w-full aspect-video overflow-hidden bg-zinc-900 border-b border-zinc-400">
               <img
                 src={project.image}
                 alt={project.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-fill"
               />
             </div>
 
