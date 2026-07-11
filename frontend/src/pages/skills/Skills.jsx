@@ -14,21 +14,22 @@ import {
   SiGithub,
   SiVite,
   SiInsomnia,
+  SiPostgresql,
+  SiGnubash,
 } from "react-icons/si";
-import { FaAws, FaJava, FaPython, FaDocker } from "react-icons/fa";
+import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
 import { TbBrandCpp } from "react-icons/tb";
-import { GrArchlinux } from "react-icons/gr";
+import { GrArchlinux, GrMysql } from "react-icons/gr";
 
 const skillGroups = [
   {
     category: "Frontend",
     skills: [
       { name: "React", icon: SiReact },
-      { name: "TypeScript", icon: SiTypescript },
-      { name: "JavaScript", icon: SiJavascript },
       { name: "Tailwind CSS", icon: SiTailwindcss },
       { name: "Bootstrap", icon: SiBootstrap },
-      { name: "HTML5", icon: SiHtml5 },
+      { name: "HTML 5", icon: SiHtml5 },
+      { name: "CSS 3", icon: FaCss3Alt },
     ],
   },
   {
@@ -36,10 +37,17 @@ const skillGroups = [
     skills: [
       { name: "Node.js", icon: SiNodedotjs },
       { name: "Express", icon: SiExpress },
-      { name: "MongoDB", icon: SiMongodb },
       { name: "AWS", icon: FaAws },
       { name: "Clerk", icon: SiClerk },
       { name: "Cloudinary", icon: SiCloudinary },
+    ],
+  },
+  {
+    category: "Database",
+    skills: [
+      { name: "MongoDB", icon: SiMongodb },
+      { name: "MySQL", icon: GrMysql },
+      { name: "PostgreSQL", icon: SiPostgresql },
     ],
   },
   {
@@ -59,6 +67,7 @@ const skillGroups = [
       { name: "JavaScript", icon: SiJavascript },
       { name: "C++", icon: TbBrandCpp },
       { name: "Python", icon: FaPython },
+      { name: "Bash", icon: SiGnubash },
     ],
   },
 ];

@@ -7,7 +7,7 @@ const projects = [
     tags: ["MongoDB", "Express", "React", "Node.js", "Bootstrap", "AWS S3"],
     liveUrl: "https://smartls.onrender.com/",
     githubUrl: "https://github.com/ThomasDelamort/SmartLibrarySystem",
-    year: "2024",
+    year: "2026",
   },
   {
     title: "Spotify Clone",
@@ -26,7 +26,7 @@ const projects = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/ThomasDelamort/SpotifyClone",
-    year: "2024",
+    year: "2026",
   },
 ];
 
