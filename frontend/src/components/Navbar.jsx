@@ -1,6 +1,6 @@
 import { SiSaturn } from "react-icons/si";
 import { Menu } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navLinks = [
   { label: "Home", href: "#" },
@@ -12,6 +12,26 @@ const navLinks = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("Home");
+
+  useEffect(() => {
+    const onScroll = () => {
+      for (const link of [...navLinks].reverse()) {
+        const el = document.getElementById(link.label.toLowerCase());
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 120) {
+            setActiveSection(link.label);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-red-700/30 bg-black/80 backdrop-blur-xl">
@@ -28,7 +48,9 @@ const Navbar = () => {
             <a
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-gray-400 transition-colors hover:text-red-600"
+              className={`text-sm font-medium transition-colors hover:text-red-600 ${
+                activeSection === link.label ? "text-red-500" : "text-gray-400"
+              }`}
             >
               {link.label}
             </a>
@@ -59,7 +81,9 @@ const Navbar = () => {
             <a
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-gray-400 hover:text-red-400"
+              className={`text-sm font-medium hover:text-red-400 ${
+                activeSection === link.label ? "text-red-500" : "text-gray-400"
+              }`}
             >
               {link.label}
             </a>

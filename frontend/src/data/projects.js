@@ -25,7 +25,7 @@ const projects = [
       "Clerk",
     ],
     liveUrl: "#",
-    githubUrl: "#",
+    githubUrl: "https://github.com/ThomasDelamort/SpotifyClone",
     year: "2024",
   },
 ];
