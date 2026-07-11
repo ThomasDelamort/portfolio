@@ -51,7 +51,7 @@ const skillGroups = [
     ],
   },
   {
-    category: "Tools",
+    category: "Tools and Platforms",
     skills: [
       { name: "Git", icon: SiGit },
       { name: "GitHub", icon: SiGithub },
