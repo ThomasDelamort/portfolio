@@ -10,7 +10,7 @@ const Hero = () => {
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left: text content */}
-            <div className="space-y-6 text-left">
+            <div className="order-2 md:order-1 space-y-6 text-left">
               <p className="text-gray-400 text-2xl">I am</p>
               <h1 className="text-[clamp(3rem,9vw,9rem)] leading-none font-extrabold bg-linear-to-r from-red-400 via-red-700 to-red-900 bg-clip-text text-transparent">
                 Neal
@@ -37,7 +37,7 @@ const Hero = () => {
               </div>
             </div>
 
-            <div className="grid place-items-center h-full">
+            <div className="order-1 md:order-2 grid place-items-center h-full">
               {/* Ambient outer glow */}
               <div className="col-start-1 row-start-1 w-[clamp(20rem,50vw,42rem)] h-[clamp(20rem,50vw,42rem)] bg-linear-to-br from-red-700 via-orange-600 to-red-900 rounded-full blur-3xl opacity-30" />
 
