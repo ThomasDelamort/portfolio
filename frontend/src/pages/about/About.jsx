@@ -43,11 +43,7 @@ const About = () => {
   }, []);
 
   return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className="relative h-[300vh] bg-black"
-    >
+    <section id="about" ref={sectionRef} className="relative h-[300vh] my-24">
       <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
         {/* Header */}
         <div className="max-w-6xl mx-auto w-full px-6 mb-10">
