@@ -4,7 +4,7 @@ import { FaFacebook, FaGithub, FaDiscord, FaInstagram } from "react-icons/fa";
 const Footer = () => {
   return (
     <>
-      <footer className="w-full border-t border-red-700/30 mt-48">
+      <footer className="w-full border-t border-red-700/30 my-10">
         <div className="mx-auto flex flex-col sm:flex-row h-auto sm:h-20 max-w-7xl items-center justify-between gap-4 sm:gap-0 px-6 py-6 sm:py-0">
           <a href="#" className="flex items-center gap-2 group">
             <SiSaturn className="w-7 h-7 mr-1 text-red-700 transition-colors group-hover:text-red-400" />
