@@ -76,10 +76,7 @@ const skillGroups = [
 
 const Skills = () => {
   return (
-    <section
-      id="skills"
-      className="w-full bg-black my-20 py-24 px-6 min-h-[60vh]"
-    >
+    <section id="skills" className="w-full bg-black my-10 py-24 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <span className="text-red-600 font-semibold text-sm tracking-widest uppercase">
