@@ -26,11 +26,11 @@ const Hero = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row w-full mt-12 gap-4 sm:gap-6">
-                <button className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-full bg-red-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-red-900/40 transition-all hover:bg-red-500 hover:shadow-red-700/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black">
+                <button className="btn-resume">
                   <Download className="w-5 h-5" />
                   Resume
                 </button>
-                <button className="flex items-center justify-center gap-2 w-full sm:w-auto rounded-full border-2 border-red-600 px-8 py-3 text-lg font-semibold text-red-500 transition-all hover:bg-red-400 hover:text-white hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black">
+                <button className="btn-contact">
                   Contact Me
                   <Mail className="w-5 h-5" />
                 </button>

@@ -4,3 +4,84 @@ body {
   background-color: black;
   max-width: 100vw;
 }
+
+/* flex items-center justify-center gap-2 w-full sm:w-auto rounded-full bg-red-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-red-900/40 transition-all hover:bg-red-500 hover:shadow-red-700/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black */
+.btn-resume {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;    
+  width: 100%;              
+  border-radius: 9999px;    
+  background-color: #dc2626; 
+  padding: 0.75rem 2rem;   
+  font-size: 1.125rem;      
+  line-height: 1.75rem;
+  font-weight: 600;         
+  color: #ffffff;           
+  box-shadow: 0 10px 15px -3px rgba(127, 29, 29, 0.4),
+              0 4px 6px -4px rgba(127, 29, 29, 0.4); 
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+/* flex items-center justify-center gap-2 w-full sm:w-auto rounded-full border-2 border-red-600 px-8 py-3 text-lg font-semibold text-red-500 transition-all hover:bg-red-400 hover:text-white hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black */
+.btn-contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;                 
+  width: 100%;                 
+  border-radius: 9999px;       
+  border: 2px solid #dc2626;   
+  background-color: transparent;
+  padding: 0.75rem 2rem;       
+  font-size: 1.125rem;         
+  line-height: 1.75rem;
+  font-weight: 600;           
+  color: #ef4444;              
+  transition: all 0.15s ease-in-out; 
+  cursor: pointer;
+}
+
+
+/* sm:w-auto (min-width: 640px) */
+@media (min-width: 640px) {
+  .btn-resume {
+    width: auto;
+  }
+  .btn-contact {
+    width: auto;
+  }
+}
+
+.btn-resume:hover {
+  background-color: #ef4444; /* hover:bg-red-500 */
+  box-shadow: 0 10px 15px -3px rgba(185, 28, 28, 0.5),
+              0 4px 6px -4px rgba(185, 28, 28, 0.5); /* hover:shadow-red-700/50 */
+  transform: scale(1.05); /* hover:scale-105 */
+}
+
+.btn-contact:hover {
+  background-color: #f87171;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.btn-resume:active {
+  transform: scale(0.95); 
+}
+
+.btn-contact:active {
+  transform: scale(0.95);
+}
+
+.btn-resume:focus {
+  outline: none; 
+  box-shadow: 0 0 0 2px #000000, 0 0 0 4px #f87171; 
+}
+
+.btn-contact:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #000000, 0 0 0 4px #f87171;
+}

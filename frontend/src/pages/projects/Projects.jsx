@@ -11,10 +11,7 @@ const Projects = () => {
   const pad = (n) => String(n + 1).padStart(2, "0");
 
   return (
-    <section
-      id="projects"
-      className="w-full bg-linear-to-l bg-black py-20 sm:py-28 px-6"
-    >
+    <section id="projects" className="w-full py-20 sm:py-28 px-6">
       <div className="max-w-6xl mx-auto">
         {/* Section header — eyebrow + heading on a baseline with the counter */}
         <div className="flex items-end justify-between border-b border-white/10 pb-6 mb-12">
