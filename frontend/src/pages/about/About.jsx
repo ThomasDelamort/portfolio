@@ -44,9 +44,9 @@ const About = () => {
 
   return (
     <section id="about" ref={sectionRef} className="relative h-[300vh] my-24">
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-24 pb-8">
         {/* Header */}
-        <div className="max-w-6xl mx-auto w-full px-6 mb-10">
+        <div className="max-w-6xl mx-auto w-full px-6 mb-10 shrink-0">
           <span className="font-mono text-xs tracking-[0.25em] uppercase text-red-500">
             Who I am
           </span>
@@ -105,7 +105,7 @@ const About = () => {
           })}
         </div>
 
-        <div className="max-w-6xl mx-auto w-full px-6 mt-8">
+        <div className="max-w-6xl mx-auto w-full px-6 mt-8 shrink-0">
           <p className="font-mono text-xs text-gray-600">↓ keep scrolling</p>
         </div>
       </div>

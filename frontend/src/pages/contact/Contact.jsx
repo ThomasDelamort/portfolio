@@ -66,14 +66,14 @@ const Contact = () => {
                   <Mail className="w-5 h-5" />
                 </span>
                 <span className="text-gray-300 group-hover:text-white transition-colors">
-                  your@email.com
+                  nealparedes776@gmail.cpm
                 </span>
               </a>
               <div className="flex items-center gap-4">
                 <span className="flex items-center justify-center w-11 h-11 rounded-full border border-red-700/30 text-red-500">
                   <MapPin className="w-5 h-5" />
                 </span>
-                <span className="text-gray-300">Cebu, Philippines</span>
+                <span className="text-gray-300">Cebu City, Philippines</span>
               </div>
             </div>
 
