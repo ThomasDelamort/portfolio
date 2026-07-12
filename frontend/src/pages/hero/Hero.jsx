@@ -3,7 +3,7 @@ import { Download, Mail, User, Code2 } from "lucide-react";
 const Hero = () => {
   return (
     <>
-      <div
+      <section
         id="home"
         className="w-full h-full bg-linear-to-t py-20 bg-black via-zinc-950 to-red-950"
       >
@@ -65,7 +65,7 @@ const Hero = () => {
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </>
   );
 };

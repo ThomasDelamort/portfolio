@@ -78,7 +78,7 @@ const Skills = () => {
   return (
     <section
       id="skills"
-      className="w-full bg-black my-10 py-24 px-6 min-h-[60vh]"
+      className="w-full bg-black my-20 py-24 px-6 min-h-[60vh]"
     >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
@@ -86,7 +86,7 @@ const Skills = () => {
             Skills
           </span>
           <h2 className="text-4xl sm:text-5xl font-extrabold text-white mt-2">
-            What I work with
+            Technologies I work with
           </h2>
         </div>
 

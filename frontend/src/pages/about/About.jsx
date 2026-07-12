@@ -12,7 +12,7 @@ const About = () => {
           About me
         </h2>
         <p className="text-gray-400 text-lg mt-4 max-w-xl mx-auto">
-          About content coming soon.
+          content coming soon.
         </p>
       </div>
     </section>

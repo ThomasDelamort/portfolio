@@ -4,7 +4,7 @@ import { FaFacebook, FaGithub, FaDiscord, FaInstagram } from "react-icons/fa";
 const Footer = () => {
   return (
     <>
-      <footer className="w-full border-t border-red-700/30">
+      <footer className="w-full border-t border-red-700/30 mt-48">
         <div className="mx-auto flex flex-col sm:flex-row h-auto sm:h-20 max-w-7xl items-center justify-between gap-4 sm:gap-0 px-6 py-6 sm:py-0">
           <a href="#" className="flex items-center gap-2 group">
             <SiSaturn className="w-7 h-7 mr-1 text-red-700 transition-colors group-hover:text-red-400" />
@@ -18,14 +18,14 @@ const Footer = () => {
           </p>
 
           <div className="flex items-center space-x-4">
-            <a href="https://web.facebook.com/KillianTheKiller/">
-              <FaFacebook className="w-7 h-7 text-red-700 hover:text-red-400 transition-colors cursor-pointer" />
-            </a>
             <a href="https://github.com/ThomasDelamort">
               <FaGithub className="w-7 h-7 text-red-700 hover:text-red-400 transition-colors cursor-pointer" />
             </a>
-            <a href="">
+            <a href="#">
               <FaDiscord className="w-7 h-7 text-red-700 hover:text-red-400 transition-colors cursor-pointer" />
+            </a>
+            <a href="https://web.facebook.com/KillianTheKiller/">
+              <FaFacebook className="w-7 h-7 text-red-700 hover:text-red-400 transition-colors cursor-pointer" />
             </a>
             <a href="https://www.instagram.com/__neallll__/">
               <FaInstagram className="w-7 h-7 text-red-700 hover:text-red-400 transition-colors cursor-pointer" />
