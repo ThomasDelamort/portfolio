@@ -1,26 +1,3 @@
-import {
-  SiReact,
-  SiTypescript,
-  SiJavascript,
-  SiTailwindcss,
-  SiBootstrap,
-  SiHtml5,
-  SiNodedotjs,
-  SiExpress,
-  SiMongodb,
-  SiClerk,
-  SiCloudinary,
-  SiGit,
-  SiGithub,
-  SiVite,
-  SiInsomnia,
-  SiPostgresql,
-  SiGnubash,
-  SiRender,
-} from "react-icons/si";
-import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
-import { TbBrandCpp } from "react-icons/tb";
-import { GrArchlinux, GrMysql } from "react-icons/gr";
 import skillGroups from "../../data/skills";
 
 const Skills = () => {
