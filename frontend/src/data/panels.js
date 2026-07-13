@@ -2,7 +2,7 @@ const panels = [
   {
     type: "quote",
     text: "One life.",
-    accent: "Make it legendary.",
+    accent: "Make it Legendary.",
   },
   {
     type: "photo",
