@@ -85,3 +85,49 @@ body {
   outline: none;
   box-shadow: 0 0 0 2px #000000, 0 0 0 4px #f87171;
 }
+/* ============================================
+   SCROLL REVEAL ANIMATIONS (inspired by drakedev)
+   Add className="reveal" (or reveal-fade / reveal-scale)
+   to a section, plus toggle "reveal-visible" via the hook.
+   ============================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  will-change: opacity, transform;
+}
+.reveal.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* fade only, no movement */
+.reveal-fade {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.reveal-fade.reveal-visible {
+  opacity: 1;
+}
+
+/* fade + subtle zoom */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-scale.reveal-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* accessibility: no motion for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-fade,
+  .reveal-scale {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Mail, MapPin, Send } from "lucide-react";
 import { FaFacebook, FaGithub, FaDiscord, FaInstagram } from "react-icons/fa";
+import useScrollReveal from "../../hooks/useScrollReveal";
 
 const socials = [
   {
@@ -23,6 +24,7 @@ const socials = [
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [revealRef, isVisible] = useScrollReveal();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -37,7 +39,11 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="w-full bg-black py-10 px-6">
+    <section
+      id="contact"
+      ref={revealRef}
+      className={`w-full bg-black py-10 px-6 reveal ${isVisible ? "reveal-visible" : ""}`}
+    >
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="border-b border-white/10 pb-6 mb-14">
