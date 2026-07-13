@@ -1,8 +1,14 @@
 import skillGroups from "../../data/skills";
+import useScrollReveal from "../../hooks/useScrollReveal";
 
 const Skills = () => {
+  const [revealRef, isVisible] = useScrollReveal();
   return (
-    <section id="skills" className="w-full py-24 px-6">
+    <section
+      id="skills"
+      ref={revealRef}
+      className={`w-full py-24 px-6 reveal ${isVisible ? "reveal-visible" : ""}`}
+    >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <span className="text-red-600 font-semibold text-sm tracking-widest uppercase">

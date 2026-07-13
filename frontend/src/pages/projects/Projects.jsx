@@ -2,12 +2,14 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import projects from "../../data/projects";
+import useScrollReveal from "../../hooks/useScrollReveal";
 
 const INTERVAL = 4500; // matches drakedev's auto-advance timing
 
 const Projects = () => {
   const [current, setCurrent] = useState(0);
   const intervalRef = useRef(null);
+  const [revealRef, isVisible] = useScrollReveal();
 
   // Clears and restarts the auto-advance interval.
   const resetTimer = useCallback(() => {
@@ -37,7 +39,11 @@ const Projects = () => {
   const pad = (n) => String(n + 1).padStart(2, "0");
 
   return (
-    <section id="projects" className="w-full py-20 sm:py-28 px-6">
+    <section
+      id="projects"
+      ref={revealRef}
+      className={`w-full py-20 sm:py-28 px-6 reveal ${isVisible ? "reveal-visible" : ""}`}
+    >
       <div className="max-w-6xl mx-auto">
         {/* Section header — eyebrow + heading on a baseline with the counter */}
         <div className="flex items-end justify-between border-b border-white/10 pb-6 mb-12">
