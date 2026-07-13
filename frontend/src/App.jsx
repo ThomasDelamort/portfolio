@@ -8,9 +8,6 @@ import About from "./pages/about/About";
 import Contact from "./pages/contact/Contact";
 import Loader from "./components/Loader";
 
-// Minimum time the loader stays on screen, so the black hole always
-// gets to spin even if images load instantly. Bump this to make the
-// intro last longer (e.g. 4000 or 5000).
 const MIN_LOADER_MS = 3500;
 
 function App() {
