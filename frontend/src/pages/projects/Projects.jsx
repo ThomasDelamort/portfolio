@@ -1,13 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import projects from "../../data/projects";
 
-const Projects = () => {
-  const [index, setIndex] = useState(0);
+const INTERVAL = 4500; // matches drakedev's auto-advance timing
 
-  const goTo = (i) => setIndex((i + projects.length) % projects.length);
-  const project = projects[index];
+const Projects = () => {
+  const [current, setCurrent] = useState(0);
+  const intervalRef = useRef(null);
+
+  // Clears and restarts the auto-advance interval.
+  const resetTimer = useCallback(() => {
+    clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setCurrent((c) => (c + 1) % projects.length);
+    }, INTERVAL);
+  }, []);
+
+  useEffect(() => {
+    resetTimer();
+    return () => clearInterval(intervalRef.current);
+  }, [resetTimer]);
+
+  // Manual nav — both restart the timer so you get a fresh interval after clicking.
+  const go = (dir) => {
+    setCurrent((c) => (c + dir + projects.length) % projects.length);
+    resetTimer();
+  };
+
+  const goTo = (i) => {
+    setCurrent(i);
+    resetTimer();
+  };
+
+  const project = projects[current];
   const pad = (n) => String(n + 1).padStart(2, "0");
 
   return (
@@ -24,7 +50,7 @@ const Projects = () => {
             </h2>
           </div>
           <div className="font-mono text-sm text-gray-500 tabular-nums">
-            <span className="text-white">{pad(index)}</span>
+            <span className="text-white">{pad(current)}</span>
             <span className="mx-1">/</span>
             <span>{pad(projects.length - 1)}</span>
           </div>
@@ -34,7 +60,7 @@ const Projects = () => {
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Image side */}
           <div
-            key={`img-${index}`}
+            key={`img-${current}`}
             className="relative animate-[fadeIn_0.5s_ease-out] overflow-hidden rounded-lg border border-white/10 bg-zinc-950 aspect-video flex items-center justify-center"
           >
             <img
@@ -47,7 +73,7 @@ const Projects = () => {
 
           {/* Detail side */}
           <div
-            key={`detail-${index}`}
+            key={`detail-${current}`}
             className="animate-[fadeIn_0.6s_ease-out]"
           >
             <div className="flex items-center gap-3 font-mono text-xs text-gray-500 mb-5">
@@ -99,21 +125,21 @@ const Projects = () => {
         {/* Controls — prev/next with a progress bar between them */}
         <div className="mt-16 flex items-center gap-6">
           <button
-            onClick={() => goTo(index - 1)}
+            onClick={() => go(-1)}
             aria-label="Previous project"
             className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <button
-            onClick={() => goTo(index + 1)}
+            onClick={() => go(1)}
             aria-label="Next project"
             className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
           >
             <ArrowRight className="w-4 h-4" />
           </button>
 
-          {/* Segmented progress */}
+          {/* Segmented progress — active segment fills over the auto-advance duration */}
           <div className="flex-1 flex items-center gap-2">
             {projects.map((_, i) => (
               <button
@@ -122,13 +148,17 @@ const Projects = () => {
                 aria-label={`Go to project ${i + 1}`}
                 className="group flex-1 h-1 rounded-full bg-white/10 overflow-hidden"
               >
-                <span
-                  className={`block h-full rounded-full transition-all duration-500 ${
-                    i === index
-                      ? "w-full bg-red-600"
-                      : "w-0 bg-red-600 group-hover:w-1/3 group-hover:bg-red-800"
-                  }`}
-                />
+                {i === current ? (
+                  <span
+                    key={`fill-${current}`}
+                    className="block h-full rounded-full bg-red-600"
+                    style={{
+                      animation: `progressFill ${INTERVAL}ms linear forwards`,
+                    }}
+                  />
+                ) : (
+                  <span className="block h-full w-0 rounded-full bg-red-600 group-hover:w-1/3 group-hover:bg-red-800 transition-all duration-500" />
+                )}
               </button>
             ))}
           </div>
@@ -139,6 +169,10 @@ const Projects = () => {
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes progressFill {
+          from { width: 0%; }
+          to { width: 100%; }
         }
       `}</style>
     </section>
