@@ -19,8 +19,11 @@ import {
   SiRender,
 } from "react-icons/si";
 import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
-import { TbBrandCpp } from "react-icons/tb";
 import { GrArchlinux, GrMysql } from "react-icons/gr";
+import { PiFileCSharp } from "react-icons/pi";
+import { SiCplusplus } from "react-icons/si";
+import { BiLogoCPlusPlus } from "react-icons/bi";
+import { TbBrandCSharp } from "react-icons/tb";
 
 const skillGroups = [
   {
@@ -67,7 +70,8 @@ const skillGroups = [
     skills: [
       { name: "Java", icon: FaJava },
       { name: "JavaScript", icon: SiJavascript },
-      { name: "C++", icon: TbBrandCpp },
+      { name: "C#", icon: TbBrandCSharp },
+      { name: "C++", icon: BiLogoCPlusPlus },
       { name: "Python", icon: FaPython },
       { name: "Bash", icon: SiGnubash },
     ],
