@@ -3,11 +3,11 @@ import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const navLinks = [
-  { label: "Home", href: "#" },
-  { label: "Projects", href: "#" },
-  { label: "Skills", href: "#" },
-  { label: "About", href: "#" },
-  { label: "Contact", href: "#" },
+  { label: "Home", href: "#home" },
+  { label: "Projects", href: "#projects" },
+  { label: "Skills", href: "#skills" },
+  { label: "About", href: "#about" },
+  { label: "Contact", href: "#contact" },
 ];
 
 const Navbar = () => {
@@ -36,7 +36,7 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-red-700/30 bg-black/80 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <a href="#" className="flex items-center gap-2 group">
+        <a href="#home" className="flex items-center gap-2 group">
           <SiSaturn className="w-7 h-7 mr-1 text-red-700 transition-colors group-hover:text-red-400" />
           <h3 className="text-2xl font-bold bg-linear-to-r from-red-700 via-red-500 to-red-400 bg-clip-text text-transparent">
             Neal
@@ -59,7 +59,7 @@ const Navbar = () => {
 
         <div className="hidden md:block">
           <a
-            href="#"
+            href="#contact"
             className="rounded-md border-2 border-red-700 px-4 py-2 text-sm font-semibold text-red-500 transition-colors hover:bg-red-700 hover:text-white"
           >
             Get in touch
@@ -89,7 +89,7 @@ const Navbar = () => {
             </a>
           ))}
           <a
-            href="#"
+            href="#contact"
             className="rounded-md border-2 border-red-700 px-4 py-2 text-center text-sm font-semibold text-red-500 hover:bg-red-700 hover:text-white transition-colors"
           >
             Get in touch
