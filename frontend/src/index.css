@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: black;
   max-width: 100vw;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
 }
 
 /* flex items-center justify-center gap-2 w-full sm:w-auto rounded-full bg-red-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-red-900/40 transition-all hover:bg-red-500 hover:shadow-red-700/50 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black */

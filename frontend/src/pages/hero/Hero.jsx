@@ -26,14 +26,14 @@ const Hero = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row w-full mt-12 gap-4 sm:gap-6">
-                <button className="btn-resume">
+                <a href="#" className="btn-resume">
                   <Download className="w-5 h-5" />
                   Resume
-                </button>
-                <button className="btn-contact">
+                </a>
+                <a href="#contact" className="btn-contact">
                   Contact Me
                   <Mail className="w-5 h-5" />
-                </button>
+                </a>
               </div>
             </div>
 
