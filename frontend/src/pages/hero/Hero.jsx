@@ -1,4 +1,14 @@
 import { Download, Mail, User, Code2 } from "lucide-react";
+import RotatingRole from "./components/RotatingRole";
+import { useState, useEffect } from "react";
+
+const roles = [
+  "Fullstack Developer",
+  "React Enthusiast",
+  "Runner",
+  "Swimmer",
+  "TKD Blackbelt",
+];
 
 const Hero = () => {
   return (
@@ -15,9 +25,7 @@ const Hero = () => {
               <h1 className="text-[clamp(3rem,9vw,9rem)] leading-none font-extrabold bg-linear-to-r from-red-400 via-red-700 to-red-900 bg-clip-text text-transparent">
                 Neal
               </h1>
-              <h2 className="text-3xl text-red-500 font-semibold">
-                Fullstack Developer
-              </h2>
+              <RotatingRole />
               <p className="text-gray-400 text-lg max-w-md">
                 Fullstack developer who enjoys turning ideas into clean,
                 functional products. I care about the details, from code
