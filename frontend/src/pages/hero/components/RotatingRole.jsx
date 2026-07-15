@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
 
 const roles = [
+  "React Enthusiast",
   "Fullstack Developer",
   "I use Arch by the way",
-  "React Enthusiast",
-  "Runner",
-  "Swimmer",
-  "TKD Blackbelt",
 ];
 
 const RotatingRole = () => {
