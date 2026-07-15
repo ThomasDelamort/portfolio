@@ -2,14 +2,6 @@ import { Download, Mail, User, Code2 } from "lucide-react";
 import RotatingRole from "./components/RotatingRole";
 import { useState, useEffect } from "react";
 
-const roles = [
-  "Fullstack Developer",
-  "React Enthusiast",
-  "Runner",
-  "Swimmer",
-  "TKD Blackbelt",
-];
-
 const Hero = () => {
   return (
     <>
