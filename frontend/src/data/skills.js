@@ -17,6 +17,7 @@ import {
   SiPostgresql,
   SiGnubash,
   SiRender,
+  SiNeon,
 } from "react-icons/si";
 import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
 import { GrArchlinux, GrMysql } from "react-icons/gr";
@@ -52,6 +53,7 @@ const skillGroups = [
       { name: "MongoDB", icon: SiMongodb },
       { name: "MySQL", icon: GrMysql },
       { name: "PostgreSQL", icon: SiPostgresql },
+      { name: "Neon", icon: SiNeon },
     ],
   },
   {
