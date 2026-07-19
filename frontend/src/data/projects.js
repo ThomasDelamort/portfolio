@@ -41,7 +41,7 @@ const projects = [
   {
     title: "Will you go out on a date with me",
     description:
-      "This was a fun fullstack project, a very playful way to ask the girl I like out on a date",
+      "This was a fun fullstack project, a very playful way to ask the girl I like out on a date.",
     image: "/projects/onlyYou.png",
     tags: ["PostgreSQL", "Express", "React", "NodeJS", "Tailwind", "Neon"],
     liveURL: "https://will-you-go-out-with-me-zvgh.onrender.com/",
