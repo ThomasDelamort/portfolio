@@ -4,14 +4,13 @@ import { FaGithub } from "react-icons/fa";
 import projects from "../../data/projects";
 import useScrollReveal from "../../hooks/useScrollReveal";
 
-const INTERVAL = 4500; // matches drakedev's auto-advance timing
+const INTERVAL = 5000;
 
 const Projects = () => {
   const [current, setCurrent] = useState(0);
   const intervalRef = useRef(null);
   const [revealRef, isVisible] = useScrollReveal();
 
-  // Clears and restarts the auto-advance interval.
   const resetTimer = useCallback(() => {
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
@@ -24,7 +23,6 @@ const Projects = () => {
     return () => clearInterval(intervalRef.current);
   }, [resetTimer]);
 
-  // Manual nav — both restart the timer so you get a fresh interval after clicking.
   const go = (dir) => {
     setCurrent((c) => (c + dir + projects.length) % projects.length);
     resetTimer();
