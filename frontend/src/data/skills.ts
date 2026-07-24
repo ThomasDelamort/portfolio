@@ -1,6 +1,5 @@
 import {
   SiReact,
-  SiTypescript,
   SiJavascript,
   SiTailwindcss,
   SiBootstrap,
@@ -20,13 +19,22 @@ import {
   SiNeon,
 } from "react-icons/si";
 import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
-import { GrArchlinux, GrMysql } from "react-icons/gr";
-import { PiFileCSharp } from "react-icons/pi";
-import { SiCplusplus } from "react-icons/si";
+import { GrMysql } from "react-icons/gr";
 import { BiLogoCPlusPlus } from "react-icons/bi";
 import { TbBrandCSharp } from "react-icons/tb";
+import type { IconType } from "react-icons";
 
-const skillGroups = [
+export interface Skill {
+  name: string;
+  icon: IconType;
+}
+
+export interface SkillGroup {
+  category: string;
+  skills: Skill[];
+}
+
+const skillGroups: SkillGroup[] = [
   {
     category: "Frontend",
     skills: [

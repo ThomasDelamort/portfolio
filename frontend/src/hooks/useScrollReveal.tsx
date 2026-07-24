@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+import type { RefObject } from "react";
 
-export default function useScrollReveal({
+interface ScrollRevealOptions {
+  threshold?: number;
+  rootMargin?: string;
+}
+
+export default function useScrollReveal<T extends HTMLElement = HTMLElement>({
   threshold = 0.15,
   rootMargin = "0px 0px -60px 0px",
-} = {}) {
-  const ref = useRef(null);
+}: ScrollRevealOptions = {}): [RefObject<T | null>, boolean] {
+  const ref = useRef<T>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {

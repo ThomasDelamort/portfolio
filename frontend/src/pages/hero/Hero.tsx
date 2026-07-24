@@ -1,6 +1,5 @@
-import { Download, Mail, User, Code2 } from "lucide-react";
+import { Download, Mail } from "lucide-react";
 import RotatingRole from "./components/RotatingRole";
-import { useState, useEffect } from "react";
 
 const Hero = () => {
   return (
