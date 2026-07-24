@@ -26,8 +26,9 @@ const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [revealRef, isVisible] = useScrollReveal();
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = () => {
     // Opens the user's email client pre-filled. Swap for a real backend/EmailJS later.

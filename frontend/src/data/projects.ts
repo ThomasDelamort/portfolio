@@ -1,4 +1,14 @@
-const projects = [
+export interface Project {
+  title: string;
+  description: string;
+  image: string;
+  tags: string[];
+  liveUrl: string;
+  githubUrl: string;
+  year: string;
+}
+
+const projects: Project[] = [
   {
     title: "Smart Library System",
     description:
@@ -33,7 +43,7 @@ const projects = [
     description:
       "The fullstack application that not only showcases my projects but also who I am as a person.",
     image: "/projects/portfolio-website.png",
-    tags: ["React", "Tailwind"],
+    tags: ["TypeScript", "React", "Tailwind"],
     liveUrl: "https://christiannealparedes.onrender.com/",
     githubUrl: "https://github.com/ThomasDelamort/portfolio",
     year: "2026",

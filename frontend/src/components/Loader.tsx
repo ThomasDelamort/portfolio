@@ -8,7 +8,7 @@ import frames from "../data/gargantuaFrames";
 */
 const FRAME_MS = 60; // ~matches the 0.05s neofetch delay
 
-const Loader = ({ done }) => {
+const Loader = ({ done }: { done: boolean }) => {
   const [frame, setFrame] = useState(0);
 
   useEffect(() => {

@@ -6,9 +6,11 @@ const roles = [
   "I use Arch by the way",
 ];
 
+type Phase = "enter" | "center" | "exit";
+
 const RotatingRole = () => {
   const [index, setIndex] = useState(0);
-  const [phase, setPhase] = useState("enter"); // "enter" | "center" | "exit"
+  const [phase, setPhase] = useState<Phase>("enter");
 
   useEffect(() => {
     const toCenter = setTimeout(() => setPhase("center"), 50);
