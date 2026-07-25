@@ -14,8 +14,8 @@ const alignMap = {
 };
 
 const About = () => {
-  const sectionRef = useRef(null);
-  const trackRef = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const [x, setX] = useState(0);
 
   useEffect(() => {
