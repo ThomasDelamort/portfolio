@@ -1,4 +1,6 @@
-import { SiSaturn } from "react-icons/si";
+// import { SiSaturn } from "react-icons/si";
+// import { GiBlackHoleBolas } from "react-icons/gi";
+import { GrArchlinux } from "react-icons/gr";
 import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -37,7 +39,7 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full border-b border-red-700/30 bg-black/80 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
         <a href="#home" className="flex items-center gap-2 group">
-          <SiSaturn className="w-7 h-7 mr-1 text-red-700 transition-colors group-hover:text-red-400" />
+          <GrArchlinux className="w-6 h-6 mr-1 text-red-700 transition-colors group-hover:text-red-400 rotate-180" />
           <h3 className="text-2xl font-bold bg-linear-to-r from-red-700 via-red-500 to-red-400 bg-clip-text text-transparent">
             Neal
           </h3>
