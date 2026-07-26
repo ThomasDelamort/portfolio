@@ -18,8 +18,9 @@ import {
   SiRender,
   SiNeon,
 } from "react-icons/si";
+
 import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
-import { GrMysql } from "react-icons/gr";
+import { GrMysql, GrArchlinux } from "react-icons/gr";
 import { BiLogoCPlusPlus } from "react-icons/bi";
 import { TbBrandCSharp } from "react-icons/tb";
 import type { IconType } from "react-icons";
@@ -73,6 +74,7 @@ const skillGroups: SkillGroup[] = [
       { name: "Insomnia", icon: SiInsomnia },
       { name: "Vite", icon: SiVite },
       { name: "Render", icon: SiRender },
+      { name: "Arch Linux", icon: GrArchlinux },
     ],
   },
   {
