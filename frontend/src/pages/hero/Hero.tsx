@@ -25,7 +25,11 @@ const Hero = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row w-full mt-12 gap-4 sm:gap-6">
-                <a href="#" className="btn-resume">
+                <a
+                  href="/resume.pdf"
+                  download="Neal-Paredes-Resume.pdf"
+                  className="btn-resume"
+                >
                   <Download className="w-5 h-5" />
                   Resume
                 </a>
