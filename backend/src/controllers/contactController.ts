@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { createContact } from "../providers/contact.provider.js";
 import { sendContactEmail } from "../providers/mailer.provider.js";
 
 export async function submitContact(req: Request, res: Response) {
@@ -15,10 +16,28 @@ export async function submitContact(req: Request, res: Response) {
   }
 
   try {
-    await sendContactEmail({ name, email, message });
-    res.json({ ok: true, message: "Message sent!" });
+    const savedMessage = await createContact({
+      name,
+      email,
+      message,
+    });
+
+    await sendContactEmail({
+      name,
+      email,
+      message,
+    });
+
+    return res.status(201).json({
+      ok: true,
+      message: "Message sent successfully",
+      data: savedMessage,
+    });
   } catch (err) {
     console.log("Email failed", err);
-    res.status(500).json({ ok: false, error: "Failed to send message" });
+
+    return res
+      .status(500)
+      .json({ ok: false, error: "Failed to submit message" });
   }
 }
