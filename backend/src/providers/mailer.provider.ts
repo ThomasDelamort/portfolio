@@ -1,7 +1,8 @@
 import nodemailer from "nodemailer";
+import type { ContactPayload } from "../types/mailer.types.js";
 
 const transporter = nodemailer.createTransport({
-  host: "stmp.gmail.com",
+  host: "smtp.gmail.com",
   port: 587,
   secure: false,
   auth: {
@@ -9,12 +10,6 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 });
-
-interface ContactPayload {
-  name: string;
-  email: string;
-  message: string;
-}
 
 export async function sendContactEmail({
   name,

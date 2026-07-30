@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { pool } from "./db.js";
+import { pool, init } from "./db.js";
 import contactRoutes from "./routes/contact.route.js";
 
 dotenv.config();
@@ -29,6 +29,6 @@ app.get("/api/db-check", async (_req: Request, res: Response) => {
 // Routes
 app.use("/api/contact", contactRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+init().then(() => {
+  app.listen(PORT, () => console.log(`Server runnin at localhost:${PORT}`));
 });
