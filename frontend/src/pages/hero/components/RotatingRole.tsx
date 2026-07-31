@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const roles = [
+const roles: string[] = [
   "React Enthusiast",
   "Fullstack Developer",
   "I use Arch by the way",

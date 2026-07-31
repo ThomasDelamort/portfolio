@@ -24,7 +24,7 @@ import { GrMysql, GrArchlinux } from "react-icons/gr";
 import { BiLogoCPlusPlus } from "react-icons/bi";
 import { TbBrandCSharp } from "react-icons/tb";
 
-import type { SkillGroup } from "../types/skills.types";
+import type { SkillGroup } from "../types/data.types";
 
 const skillGroups: SkillGroup[] = [
   {

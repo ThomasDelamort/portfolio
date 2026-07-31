@@ -1,4 +1,4 @@
-import type { Panel } from "../types/panel.types";
+import type { Panel } from "../types/data.types";
 
 const panels: Panel[] = [
   {
