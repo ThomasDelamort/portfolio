@@ -23,17 +23,8 @@ import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
 import { GrMysql, GrArchlinux } from "react-icons/gr";
 import { BiLogoCPlusPlus } from "react-icons/bi";
 import { TbBrandCSharp } from "react-icons/tb";
-import type { IconType } from "react-icons";
 
-export interface Skill {
-  name: string;
-  icon: IconType;
-}
-
-export interface SkillGroup {
-  category: string;
-  skills: Skill[];
-}
+import type { SkillGroup } from "../types/data.types";
 
 const skillGroups: SkillGroup[] = [
   {
