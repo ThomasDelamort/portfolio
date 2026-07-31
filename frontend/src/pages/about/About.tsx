@@ -1,13 +1,15 @@
 import { useRef, useState, useEffect } from "react";
+import type { SizeMap, AlignMap } from "../../types/about.types";
 import panels from "../../data/panels";
 
-const sizeMap = {
+
+const sizeMap: SizeMap = {
   sm: "w-[220px] sm:w-[260px] aspect-[3/4]",
   md: "w-[300px] sm:w-[360px] aspect-[4/5]",
   lg: "w-[420px] sm:w-[560px] aspect-square",
 };
 
-const alignMap = {
+const alignMap: AlignMap = {
   top: "self-start mt-8",
   center: "self-center",
   bottom: "self-end mb-8",
