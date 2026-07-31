@@ -13,12 +13,20 @@ export const pool = new Pool({
       : false,
 });
 
-pool
-  .connect()
-  .then((client) => {
-    console.log("Connected to PostgreSQL");
-    client.release();
-  })
-  .catch((err) => {
-    console.error("PostgreSQL connection error: ", err.message);
-  });
+export async function init() {
+  try {
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS messages (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(120) NOT NULL,
+      email VARCHAR(120) NOT NULL,
+      message TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+    console.log("Database: messages table created.");
+  } catch (err) {
+    console.error(`Database error: ${err}`);
+  }
+}
