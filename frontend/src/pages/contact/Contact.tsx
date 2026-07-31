@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState} from "react";
+import type { Socials } from "../../types/contact.types.ts";
 import { Mail, MapPin, Send } from "lucide-react";
 import { FaFacebook, FaGithub, FaDiscord, FaInstagram } from "react-icons/fa";
 import useScrollReveal from "../../hooks/useScrollReveal";
 
-const socials = [
+const socials: Socials[] = [
   {
     icon: FaGithub,
     href: "https://github.com/ThomasDelamort",
@@ -36,7 +37,7 @@ const Contact = () => {
     const body = encodeURIComponent(
       `${form.message}\n\nFrom: ${form.name} (${form.email})`,
     );
-    window.location.href = `mailto:your@email.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:nealparedes776@gmail.com?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -66,14 +67,14 @@ const Contact = () => {
 
             <div className="space-y-4">
               <a
-                href="mailto:your@email.com"
+                href=""
                 className="flex items-center gap-4 group"
               >
                 <span className="flex items-center justify-center w-11 h-11 rounded-full border border-red-700/30 text-red-500 transition-colors group-hover:border-red-600 group-hover:bg-red-950/30">
                   <Mail className="w-5 h-5" />
                 </span>
                 <span className="text-gray-300 group-hover:text-white transition-colors">
-                  nealparedes776@gmail.cpm
+                  nealparedes776@gmail.com
                 </span>
               </a>
               <div className="flex items-center gap-4">
