@@ -66,13 +66,13 @@ const About = () => {
             if (panel.type === "quote") {
               return (
                 <div key={i} className="shrink-0 w-75 sm:w-95 self-center">
-                  <p className="text-3xl sm:text-5xl font-bold text-zinc-200 leading-tight tracking-tight">
+                  <p className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight">
                     {panel.text}
                   </p>
-                  <p className="text-3xl sm:text-5xl font-bold text-zinc-200 leading-tight tracking-tight">
+                  <p className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight">
                     {panel.fill}
                   </p>
-                  <p className="text-3xl sm:text-5xl font-bold text-red-600 leading-tight tracking-tight">
+                  <p className="text-3xl sm:text-5xl font-extrabold text-red-600 leading-tight tracking-tight">
                     {panel.accent}
                   </p>
                 </div>
