@@ -60,7 +60,7 @@ const About = () => {
         <div
           ref={trackRef}
           className="flex items-stretch gap-8 sm:gap-16 px-6 sm:px-12 will-change-transform"
-          style={{ transform: `translateX(-${x}px)` }}
+          style={{ transform: `translatex(-${x}px)` }}
         >
           {panels.map((panel, i) => {
             if (panel.type === "quote") {
@@ -68,6 +68,9 @@ const About = () => {
                 <div key={i} className="shrink-0 w-75 sm:w-95 self-center">
                   <p className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight">
                     {panel.text}
+                  </p>
+                  <p className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight">
+                    {panel.fill}
                   </p>
                   <p className="text-3xl sm:text-5xl font-extrabold text-red-600 leading-tight tracking-tight">
                     {panel.accent}
