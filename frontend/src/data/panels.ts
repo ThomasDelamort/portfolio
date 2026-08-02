@@ -3,7 +3,7 @@ import type { Panel } from "../types/data.types";
 const panels: Panel[] = [
   {
     type: "quote",
-    text: "One life",
+    text: "One life,",
     fill: "Make it",
     accent: "Legendary.",
   },
