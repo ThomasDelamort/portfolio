@@ -1,43 +1,47 @@
-import { useState} from "react";
-import type { Socials } from "../../types/contact.types.ts";
+import { useState } from "react";
 import { Mail, MapPin, Send } from "lucide-react";
-import { FaFacebook, FaGithub, FaDiscord, FaInstagram } from "react-icons/fa";
 import useScrollReveal from "../../hooks/useScrollReveal";
-
-const socials: Socials[] = [
-  {
-    icon: FaGithub,
-    href: "https://github.com/ThomasDelamort",
-    label: "GitHub",
-  },
-  {
-    icon: FaInstagram,
-    href: "https://www.instagram.com/__neallll__/",
-    label: "Instagram",
-  },
-  {
-    icon: FaFacebook,
-    href: "https://web.facebook.com/KillianTheKiller/",
-    label: "Facebook",
-  },
-  { icon: FaDiscord, href: "#", label: "Discord" },
-];
+import { sendContact } from "../../services/contact.service.ts";
+import type { ContactForm } from "../../types/contact.types.ts";
 
 const Contact = () => {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState<ContactForm>({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
   const [revealRef, isVisible] = useScrollReveal();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = () => {
-    // Opens the user's email client pre-filled. Swap for a real backend/EmailJS later.
-    const subject = encodeURIComponent(`Portfolio message from ${form.name}`);
-    const body = encodeURIComponent(
-      `${form.message}\n\nFrom: ${form.name} (${form.email})`,
-    );
-    window.location.href = `mailto:nealparedes776@gmail.com?subject=${subject}&body=${body}`;
+  const handleSubmit = async () => {
+    setLoading(true);
+    setSuccess("");
+    setError("");
+
+    try {
+      await sendContact(form);
+
+      setSuccess("Message sent successfully!");
+
+      setForm({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } catch (err) {
+      err instanceof Error
+        ? setError(err.message)
+        : setError("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -66,10 +70,7 @@ const Contact = () => {
             </p>
 
             <div className="space-y-4">
-              <a
-                href=""
-                className="flex items-center gap-4 group"
-              >
+              <a href="" className="flex items-center gap-4 group">
                 <span className="flex items-center justify-center w-11 h-11 rounded-full border border-red-700/30 text-red-500 transition-colors group-hover:border-red-600 group-hover:bg-red-950/30">
                   <Mail className="w-5 h-5" />
                 </span>
@@ -86,24 +87,16 @@ const Contact = () => {
             </div>
 
             {/* Socials */}
-            <div className="flex items-center gap-4 pt-2">
-              {socials.map(({ icon: Icon, href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-gray-400 transition-colors hover:border-red-600 hover:text-red-500"
-                >
-                  <Icon className="w-5 h-5" />
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Right: form */}
-          <div className="space-y-5">
+          <form
+            className="space-y-5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
             <div>
               <label className="block font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">
                 Name
@@ -114,9 +107,11 @@ const Contact = () => {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Your name"
+                required
                 className="w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-4 py-3 text-white placeholder-gray-600 outline-none transition-colors focus:border-red-600"
               />
             </div>
+
             <div>
               <label className="block font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">
                 Email
@@ -127,9 +122,11 @@ const Contact = () => {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="you@email.com"
+                required
                 className="w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-4 py-3 text-white placeholder-gray-600 outline-none transition-colors focus:border-red-600"
               />
             </div>
+
             <div>
               <label className="block font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">
                 Message
@@ -140,17 +137,28 @@ const Contact = () => {
                 onChange={handleChange}
                 rows={5}
                 placeholder="Tell me about it..."
+                required
                 className="w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-4 py-3 text-white placeholder-gray-600 outline-none transition-colors focus:border-red-600 resize-none"
               />
             </div>
+
             <button
-              onClick={handleSubmit}
-              className="flex items-center justify-center gap-2 w-full rounded-full bg-red-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-red-900/40 transition-all hover:bg-red-500 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black"
+              type="submit"
+              disabled={loading}
+              className="flex items-center justify-center gap-2 w-full rounded-full bg-red-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-red-900/40 transition-all hover:bg-red-500 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Send message
+              {loading ? "Sending..." : "Send Message"}
               <Send className="w-4 h-4" />
             </button>
-          </div>
+
+            {success && (
+              <p className="text-center text-green-500 text-sm">{success}</p>
+            )}
+
+            {error && (
+              <p className="text-center text-red-500 text-sm">{error}</p>
+            )}
+          </form>
         </div>
       </div>
     </section>

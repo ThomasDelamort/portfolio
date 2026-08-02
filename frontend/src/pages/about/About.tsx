@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import type { SizeMap, AlignMap } from "../../types/about.types";
 import panels from "../../data/panels";
 
-
 const sizeMap: SizeMap = {
   sm: "w-[220px] sm:w-[260px] aspect-[3/4]",
   md: "w-[300px] sm:w-[360px] aspect-[4/5]",

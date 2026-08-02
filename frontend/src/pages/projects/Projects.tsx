@@ -122,28 +122,30 @@ const Projects = () => {
                 <FaGithub className="w-4 h-4" />
                 Source
               </a>
+
+              {/* Controls — prev/next */}
+              <div className="ml-45 flex items-center gap-3">
+                <button
+                  onClick={() => go(-1)}
+                  aria-label="Previous project"
+                  className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => go(1)}
+                  aria-label="Next project"
+                  className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Controls — prev/next with a progress bar between them */}
+        {/* Segmented progress — active segment fills over the auto-advance duration */}
         <div className="mt-16 flex items-center gap-6">
-          <button
-            onClick={() => go(-1)}
-            aria-label="Previous project"
-            className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => go(1)}
-            aria-label="Next project"
-            className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </button>
-
-          {/* Segmented progress — active segment fills over the auto-advance duration */}
           <div className="flex-1 flex items-center gap-2">
             {projects.map((_, i) => (
               <button
