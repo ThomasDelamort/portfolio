@@ -1,29 +1,8 @@
 import { useState } from "react";
-// import type { Socials } from "../../types/contact.types.ts";
 import { Mail, MapPin, Send } from "lucide-react";
-// import { FaFacebook, FaGithub, FaDiscord, FaInstagram } from "react-icons/fa";
 import useScrollReveal from "../../hooks/useScrollReveal";
 import { sendContact } from "../../services/contact.service.ts";
 import type { ContactForm } from "../../types/contact.types.ts";
-
-// const socials: Socials[] = [
-//   {
-//     icon: FaGithub,
-//     href: "https://github.com/ThomasDelamort",
-//     label: "GitHub",
-//   },
-//   {
-//     icon: FaInstagram,
-//     href: "https://www.instagram.com/__neallll__/",
-//     label: "Instagram",
-//   },
-//   {
-//     icon: FaFacebook,
-//     href: "https://web.facebook.com/KillianTheKiller/",
-//     label: "Facebook",
-//   },
-//   { icon: FaDiscord, href: "#", label: "Discord" },
-// ];
 
 const Contact = () => {
   const [form, setForm] = useState<ContactForm>({

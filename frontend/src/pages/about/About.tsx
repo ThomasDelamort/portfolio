@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import type { SizeMap, AlignMap } from "../../types/about.types";
 import panels from "../../data/panels";
 
-
 const sizeMap: SizeMap = {
   sm: "w-[220px] sm:w-[260px] aspect-[3/4]",
   md: "w-[300px] sm:w-[360px] aspect-[4/5]",
@@ -68,6 +67,9 @@ const About = () => {
                 <div key={i} className="shrink-0 w-75 sm:w-95 self-center">
                   <p className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight">
                     {panel.text}
+                  </p>
+                  <p className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight">
+                    {panel.fill}
                   </p>
                   <p className="text-3xl sm:text-5xl font-extrabold text-red-600 leading-tight tracking-tight">
                     {panel.accent}

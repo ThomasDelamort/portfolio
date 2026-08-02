@@ -3,8 +3,9 @@ import type { Panel } from "../types/data.types";
 const panels: Panel[] = [
   {
     type: "quote",
-    text: "One life.",
-    accent: "Make it Legendary.",
+    text: "One life",
+    fill: "Make it",
+    accent: "Legendary.",
   },
   {
     type: "photo",
