@@ -5,10 +5,10 @@ export type PanelSize = "sm" | "md" | "lg";
 export type PanelAlign = "top" | "center" | "bottom";
 
 export interface QuotePanel {
-  type: "quote";
-  text: string;
-  fill: string;
-  accent: string;
+    type: "quote";
+    text: string;
+    fill: string;
+    accent: string;
 }
 
 export interface PhotoPanel {
