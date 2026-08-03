@@ -29,6 +29,12 @@ app.get("/api/db-check", async (_req: Request, res: Response) => {
 // Routes
 app.use("/api/contact", contactRoutes);
 
-init().then(() => {
-  app.listen(PORT, () => console.log(`Server runnin at localhost:${PORT}`));
-});
+init()
+  .then(() => {
+    app.listen(PORT, () => console.log(`Server runnin at localhost:${PORT}`));
+  })
+  .catch((err) => {
+    console.error("Failed to initialize database:", err.message);
+    console.error("Check your database url.");
+    process.exit(1);
+  });
