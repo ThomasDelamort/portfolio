@@ -19,7 +19,7 @@ const projects: Project[] = [
     tags: [
       "TypeScript",
       "MongoDB",
-      "Tailwind",
+      "TailwindCSS",
       "Express",
       "React",
       "NodeJS",
@@ -35,7 +35,15 @@ const projects: Project[] = [
     description:
       "The fullstack application that not only showcases my projects but also who I am as a person.",
     image: "/projects/portfolio-website.png",
-    tags: ["TypeScript", "React", "Tailwind"],
+    tags: [
+      "TypeScript",
+      "PostgreSQL",
+      "Express",
+      "React",
+      "NodeJS",
+      "TailwindCSS",
+      "Neon",
+    ],
     liveUrl: "https://christiannealparedes.onrender.com/",
     githubUrl: "https://github.com/ThomasDelamort/portfolio",
     year: "2026",
@@ -45,7 +53,7 @@ const projects: Project[] = [
     description:
       "This was a fun fullstack project, a very playful way to ask the girl I like out on a date.",
     image: "/projects/onlyYou.png",
-    tags: ["PostgreSQL", "Express", "React", "NodeJS", "Tailwind", "Neon"],
+    tags: ["PostgreSQL", "Express", "React", "NodeJS", "TailwindCSS", "Neon"],
     liveUrl: "https://will-you-go-out-with-me-zvgh.onrender.com/",
     githubUrl: "https://github.com/ThomasDelamort/willYouGoOutOnADateWithMe",
     year: "2026",
