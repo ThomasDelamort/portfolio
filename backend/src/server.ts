@@ -1,4 +1,4 @@
-import express, { type Request, type Response } from "express";
+import express, { type Express, type Request, type Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { pool, init } from "./db.js";
@@ -6,7 +6,7 @@ import contactRoutes from "./routes/contact.route.js";
 
 dotenv.config();
 
-const app = express();
+const app: Express = express();
 const PORT = process.env.PORT;
 
 app.use(cors());
