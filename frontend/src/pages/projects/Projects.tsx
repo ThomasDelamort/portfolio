@@ -61,7 +61,7 @@ const Projects = () => {
         </div>
 
         {/* Case-study spread */}
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Image side */}
           <div
             key={`img-${current}`}
@@ -90,7 +90,7 @@ const Projects = () => {
               {project.title}
             </h3>
 
-            <p className="mt-5 text-gray-400 text-lg leading-relaxed max-w-md">
+            <p className="mt-5 max-w-xl text-base sm:text-lg leading-relaxed text-gray-400">
               {project.description}
             </p>
 
@@ -103,28 +103,29 @@ const Projects = () => {
               ))}
             </ul>
 
-            <div className="mt-10 flex items-center gap-6">
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 text-sm font-semibold text-white border-b border-red-600 pb-1 transition-colors hover:text-red-400"
-              >
-                View live
-                <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </a>
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-white"
-              >
-                <FaGithub className="w-4 h-4" />
-                Source
-              </a>
+            <div className="mt-10 flex items-center gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-6">
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 text-sm font-semibold text-white border-b border-red-600 pb-1 transition-colors hover:text-red-400"
+                >
+                  View live
+                  <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </a>
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-white"
+                >
+                  <FaGithub className="w-4 h-4" />
+                  Source
+                </a>
 
-              {/* Controls — prev/next */}
-              <div className="ml-45 flex items-center gap-3">
+                {/* Controls — prev/next */}
+
                 <button
                   onClick={() => go(-1)}
                   aria-label="Previous project"
@@ -145,7 +146,7 @@ const Projects = () => {
         </div>
 
         {/* Segmented progress — active segment fills over the auto-advance duration */}
-        <div className="mt-16 flex items-center gap-6">
+        <div className="mt-12 sm:mt-16 flex items-center gap-3 sm:gap-6">
           <div className="flex-1 flex items-center gap-2">
             {projects.map((_, i) => (
               <button
