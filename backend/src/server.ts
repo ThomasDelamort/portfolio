@@ -31,7 +31,9 @@ app.use("/api/contact", contactRoutes);
 
 init()
   .then(() => {
-    app.listen(PORT, () => console.log(`Server running at localhost: ${PORT}`));
+    app.listen(PORT, () =>
+      console.log(`✅ Server running at localhost: ${PORT}`),
+    );
   })
   .catch((err) => {
     console.error("Failed to initialize database:", err.message);
