@@ -9,7 +9,11 @@ dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN || "*",
+  }),
+);
 app.use(express.json());
 
 app.get("/api/health", (req: Request, res: Response) => {

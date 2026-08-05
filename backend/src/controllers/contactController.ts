@@ -15,29 +15,31 @@ export async function submitContact(req: Request, res: Response) {
       .json({ ok: false, error: "All fields are required." });
   }
 
+  let savedMessage;
+
   try {
-    const savedMessage = await createContact({
+    savedMessage = await createContact({
       name,
       email,
       message,
     });
+  } catch (err) {
+    console.error(" Failed to save message to database:", err);
+  }
 
+  try {
     await sendContactEmail({
       name,
       email,
       message,
     });
-
-    return res.status(201).json({
-      ok: true,
-      message: "Message sent successfully",
-      data: savedMessage,
-    });
   } catch (err) {
-    console.log("Email failed", err);
-
-    return res
-      .status(500)
-      .json({ ok: false, error: "Failed to submit message" });
+    console.error(" Message saved but email failed to send:", err);
   }
+
+  return res.status(201).json({
+    ok: true,
+    message: "Message sent successfully",
+    data: savedMessage,
+  });
 }
