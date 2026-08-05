@@ -1,33 +1,29 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import type { ContactPayload } from "../types/mailer.types.js";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendContactEmail({
   name,
   email,
   message,
 }: ContactPayload) {
-  await transporter.sendMail({
-    from: `"Portfolio Contact" <${process.env.SMTP_USER}>`,
-    to: process.env.MAIL_TO,
-    replyTo: email, // so you can reply directly to whoever messaged you
+  const { error } = await resend.emails.send({
+    from: "Portfolio Contact <onboarding@resend.dev>",
+    to: process.env.MAIL_TO!,
+    replyTo: email, // so replying goes to whoever messaged you
     subject: `New portfolio message from ${name}`,
     text: `${message}\n\nFrom: ${name} (${email})`,
     html: `
-      <h2>New portfolio message</h2>
+      <h2>New mail from portfolio</h2>
       <p><strong>Name:</strong> ${name}</p>
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Message:</strong></p>
       <p>${message.replace(/\n/g, "<br>")}</p>
     `,
   });
+
+  if (error) {
+    throw new Error(error.message);
+  }
 }
