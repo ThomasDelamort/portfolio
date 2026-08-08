@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Mail, MapPin, Send } from "lucide-react";
 import useScrollReveal from "../../hooks/useScrollReveal";
 import { sendContact } from "../../services/contact.service.ts";
-import type { ContactForm } from "../../types/contact.types.ts";
+import type { ContactForm } from "../../types/index.ts";
 
 const Contact = () => {
   const [form, setForm] = useState<ContactForm>({

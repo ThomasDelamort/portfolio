@@ -1,4 +1,4 @@
-import type { ContactForm, ContactResponse } from "../types/contact.types.ts";
+import type { ContactForm, ContactResponse } from "../types/index.ts";
 
 const API: string = import.meta.env.VITE_API_URL;
 

@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 import frames from "../data/gargantuaFrames";
 
-/*
-  Animated ASCII Gargantua loading screen.
-  Cycles through 36 truecolor ASCII frames (converted from the
-  neofetch animation) to spin the black hole. Fades out when `done`.
-*/
-const FRAME_MS = 60; // ~matches the 0.05s neofetch delay
+const FRAME_MS = 60;
 
 const Loader = ({ done }: { done: boolean }) => {
   const [frame, setFrame] = useState(0);

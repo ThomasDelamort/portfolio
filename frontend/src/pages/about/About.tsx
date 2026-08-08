@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import type { SizeMap, AlignMap } from "../../types/about.types";
+import type { SizeMap, AlignMap } from "../../types/index.ts";
 import panels from "../../data/panels";
 
 const sizeMap: SizeMap = {

@@ -5,10 +5,10 @@ export type PanelSize = "sm" | "md" | "lg";
 export type PanelAlign = "top" | "center" | "bottom";
 
 export interface QuotePanel {
-    type: "quote";
-    text: string;
-    fill: string;
-    accent: string;
+  type: "quote";
+  text: string;
+  fill: string;
+  accent: string;
 }
 
 export interface PhotoPanel {
@@ -42,4 +42,30 @@ export interface Skill {
 export interface SkillGroup {
   category: string;
   skills: Skill[];
+}
+
+// import type { IconType } from "react-icons";
+
+export interface ContactForm {
+  name: string;
+  email: string;
+  message: string;
+}
+
+export interface ContactResponse {
+  ok: boolean;
+  message?: string;
+  error?: string;
+}
+
+export interface SizeMap {
+  sm: string;
+  md: string;
+  lg: string;
+}
+
+export interface AlignMap {
+  top: string;
+  center: string;
+  bottom: string;
 }

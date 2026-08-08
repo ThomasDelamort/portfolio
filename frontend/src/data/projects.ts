@@ -1,4 +1,4 @@
-import type { Project } from "../types/data.types";
+import type { Project } from "../types/index.ts";
 
 const projects: Project[] = [
   {
