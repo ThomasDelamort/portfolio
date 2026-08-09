@@ -17,6 +17,7 @@ import {
   SiGnubash,
   SiRender,
   SiNeon,
+  SiFastapi,
 } from "react-icons/si";
 
 import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
@@ -42,6 +43,7 @@ const skillGroups: SkillGroup[] = [
     skills: [
       { name: "Node.js", icon: SiNodedotjs },
       { name: "Express", icon: SiExpress },
+      { name: "FastAPI", icon: SiFastapi },
       { name: "AWS", icon: FaAws },
       { name: "Clerk", icon: SiClerk },
       { name: "Cloudinary", icon: SiCloudinary },
