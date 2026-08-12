@@ -126,20 +126,22 @@ const Projects = () => {
 
                 {/* Controls — prev/next */}
 
-                <button
-                  onClick={() => go(-1)}
-                  aria-label="Previous project"
-                  className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => go(1)}
-                  aria-label="Next project"
-                  className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-                >
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-3 pt-2 sm:pt-0 sm:pl-6 sm:border-l sm:border-white/10">
+                  <button
+                    onClick={() => go(-1)}
+                    aria-label="Previous project"
+                    className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => go(1)}
+                    aria-label="Next project"
+                    className="flex items-center justify-center w-11 h-11 rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

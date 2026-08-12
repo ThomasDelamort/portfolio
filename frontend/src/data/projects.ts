@@ -6,7 +6,15 @@ const projects: Project[] = [
     description:
       "A web-based library platform for seamless borrowing, tracking, reservations, approvals, and administration.",
     image: "/projects/smartls.png",
-    tags: ["MongoDB", "Express", "React", "Node.js", "Bootstrap", "AWS S3"],
+    tags: [
+      "MongoDB",
+      "Express",
+      "React",
+      "Node.js",
+      "Bootstrap",
+      "AWS S3",
+      "Docker",
+    ],
     liveUrl: "https://smartls.onrender.com/",
     githubUrl: "https://github.com/ThomasDelamort/SmartLibrarySystem",
     year: "2026",
@@ -25,9 +33,29 @@ const projects: Project[] = [
       "NodeJS",
       "Cloudinary",
       "Clerk",
+      "Docker",
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/ThomasDelamort/SpotifyClone",
+    year: "2026",
+  },
+  {
+    title: "AirSiloy",
+    description:
+      "An IoT-based air quality monitoring system that detects and analyzes environmental air conditions in real time, providing alerts and actionable insights when air quality reaches unhealthy levels.",
+    image: "/projects/AirSiloy.png",
+    tags: [
+      "TypeScript",
+      "TailwindCSS",
+      "React",
+      "FastAPI",
+      "Docker",
+      "Iot",
+      "Bash",
+      "Clerk",
+    ],
+    liveUrl: "",
+    githubUrl: "https://github.com/ThomasDelamort/AirSiloy",
     year: "2026",
   },
   {
@@ -49,7 +77,7 @@ const projects: Project[] = [
     year: "2026",
   },
   {
-    title: "Will you go out on a date with me",
+    title: "Ask her out",
     description:
       "This was a fun fullstack project, a very playful way to ask the girl I like out on a date.",
     image: "/projects/onlyYou.png",
