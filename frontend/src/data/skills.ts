@@ -18,6 +18,9 @@ import {
   SiRender,
   SiNeon,
   SiFastapi,
+  SiClaudecode,
+  SiClaude,
+  SiSqlite,
 } from "react-icons/si";
 
 import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
@@ -53,6 +56,7 @@ const skillGroups: SkillGroup[] = [
     category: "Database",
     skills: [
       { name: "MongoDB", icon: SiMongodb },
+      { name: "SQLite", icon: SiSqlite },
       { name: "MySQL", icon: GrMysql },
       { name: "PostgreSQL", icon: SiPostgresql },
       { name: "Neon", icon: SiNeon },
@@ -79,6 +83,13 @@ const skillGroups: SkillGroup[] = [
       { name: "C++", icon: BiLogoCPlusPlus },
       { name: "Python", icon: FaPython },
       { name: "Bash", icon: SiGnubash },
+    ],
+  },
+  {
+    category: "Gen AI",
+    skills: [
+      { name: "Claude", icon: SiClaude },
+      { name: "Claude Code", icon: SiClaudecode },
     ],
   },
 ];
