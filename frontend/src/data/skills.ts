@@ -17,13 +17,14 @@ import {
   SiGnubash,
   SiRender,
   SiNeon,
-  SiFastapi,
+  // SiFastapi,
   SiClaudecode,
   SiClaude,
   SiSqlite,
 } from "react-icons/si";
-
-import { FaAws, FaJava, FaPython, FaDocker, FaCss3Alt } from "react-icons/fa";
+// FaAws
+// FaDocker
+import { FaJava, FaPython, FaCss3Alt } from "react-icons/fa";
 import { GrMysql, GrArchlinux } from "react-icons/gr";
 import { BiLogoCPlusPlus } from "react-icons/bi";
 import { TbBrandCSharp } from "react-icons/tb";
@@ -46,8 +47,8 @@ const skillGroups: SkillGroup[] = [
     skills: [
       { name: "Node.js", icon: SiNodedotjs },
       { name: "Express", icon: SiExpress },
-      { name: "FastAPI", icon: SiFastapi },
-      { name: "AWS", icon: FaAws },
+      // { name: "FastAPI", icon: SiFastapi },
+      // { name: "AWS", icon: FaAws },
       { name: "Clerk", icon: SiClerk },
       { name: "Cloudinary", icon: SiCloudinary },
     ],
@@ -67,7 +68,7 @@ const skillGroups: SkillGroup[] = [
     skills: [
       { name: "Git", icon: SiGit },
       { name: "GitHub", icon: SiGithub },
-      { name: "Docker", icon: FaDocker },
+      // { name: "Docker", icon: FaDocker },
       { name: "Insomnia", icon: SiInsomnia },
       { name: "Vite", icon: SiVite },
       { name: "Render", icon: SiRender },
@@ -86,7 +87,7 @@ const skillGroups: SkillGroup[] = [
     ],
   },
   {
-    category: "Gen AI",
+    category: "AI",
     skills: [
       { name: "Claude", icon: SiClaude },
       { name: "Claude Code", icon: SiClaudecode },
