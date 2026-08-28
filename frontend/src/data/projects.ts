@@ -42,7 +42,7 @@ const projects: Project[] = [
   {
     title: "AirSiloy",
     description:
-      "An IoT-based air quality monitoring system that detects and analyzes environmental air conditions in real time, providing alerts and actionable insights when air quality reaches unhealthy levels.",
+      "An AI Powered IoT-based air quality monitoring system that detects and analyzes environmental air conditions in real time, providing alerts and actionable insights when air quality reaches unhealthy levels.",
     image: "/projects/AirSiloy.png",
     tags: [
       "TypeScript",
