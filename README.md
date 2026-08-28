@@ -2,9 +2,7 @@
 
 # Christian Neal Paredes — Portfolio
 
-A full-stack personal portfolio: a React/TypeScript frontend with a scroll-driven,
-animated UI, backed by an Express API that stores contact messages in Postgres
-and emails them out via Resend.
+<em>My fullstack portfolio website</em>
 
 [![Live Site](https://img.shields.io/badge/live-christiannealparedes.onrender.com-red?style=flat-square)](https://christiannealparedes.onrender.com/)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
@@ -24,10 +22,10 @@ and emails them out via Resend.
 
 This repo is a monorepo with two independently deployable pieces:
 
-| | |
-|---|---|
-| **`frontend/`** | Vite + React 19 + TypeScript single-page site. Framer Motion for scroll animations, Tailwind CSS 4 for styling. |
-| **`backend/`** | Express 5 + TypeScript API. Persists contact form submissions to PostgreSQL and sends a notification email via [Resend](https://resend.com). |
+|                 |                                                                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`frontend/`** | Vite + React 19 + TypeScript single-page site. Framer Motion for scroll animations, Tailwind CSS 4 for styling.                              |
+| **`backend/`**  | Express 5 + TypeScript API. Persists contact form submissions to PostgreSQL and sends a notification email via [Resend](https://resend.com). |
 
 The site is one long scroll made up of five sections — **Hero, Projects, Skills,
 About, Contact** — plus a min-duration boot loader that waits for images before
@@ -87,40 +85,40 @@ npm run dev             # vite dev server
 
 Other scripts (run inside `frontend/` or `backend/`):
 
-| Command | Frontend | Backend |
-|---|---|---|
-| `npm run dev` | Vite dev server with HMR | `tsx watch` on `src/server.ts` |
-| `npm run build` | Type-check + Vite build → `dist/` | `tsc` compile → `dist/` |
-| `npm start` | — | Run compiled `dist/server.js` |
-| `npm run lint` | oxlint | — |
+| Command         | Frontend                          | Backend                        |
+| --------------- | --------------------------------- | ------------------------------ |
+| `npm run dev`   | Vite dev server with HMR          | `tsx watch` on `src/server.ts` |
+| `npm run build` | Type-check + Vite build → `dist/` | `tsc` compile → `dist/`        |
+| `npm start`     | —                                 | Run compiled `dist/server.js`  |
+| `npm run lint`  | oxlint                            | —                              |
 
 ### Environment variables
 
 **`backend/.env`**
 
-| Variable | Description |
-|---|---|
-| `DATABASE_URL` | Postgres connection string |
-| `PGSSL` | Set when the DB requires SSL (e.g. Neon) |
-| `PORT` | Port the API listens on |
-| `NODE_ENV` | `development` / `production` — controls SSL behavior for `pg` |
-| `CLIENT_ORIGIN` | Allowed CORS origin for the frontend |
-| `RESEND_API_KEY` | API key from [Resend](https://resend.com) |
-| `MAIL_TO` | Address that receives contact form submissions |
+| Variable         | Description                                                   |
+| ---------------- | ------------------------------------------------------------- |
+| `DATABASE_URL`   | Postgres connection string                                    |
+| `PGSSL`          | Set when the DB requires SSL (e.g. Neon)                      |
+| `PORT`           | Port the API listens on                                       |
+| `NODE_ENV`       | `development` / `production` — controls SSL behavior for `pg` |
+| `CLIENT_ORIGIN`  | Allowed CORS origin for the frontend                          |
+| `RESEND_API_KEY` | API key from [Resend](https://resend.com)                     |
+| `MAIL_TO`        | Address that receives contact form submissions                |
 
 **`frontend/.env`**
 
-| Variable | Description |
-|---|---|
+| Variable       | Description                                                   |
+| -------------- | ------------------------------------------------------------- |
 | `VITE_API_URL` | Base URL of the backend API, e.g. `http://localhost:5000/api` |
 
 ## API
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/health` | Liveness check |
-| `GET` | `/api/db-check` | Verifies the database connection |
-| `POST` | `/api/contact` | Body: `{ name, email, message }`. Saves the message to Postgres and emails it via Resend. |
+| Method | Endpoint        | Description                                                                               |
+| ------ | --------------- | ----------------------------------------------------------------------------------------- |
+| `GET`  | `/api/health`   | Liveness check                                                                            |
+| `GET`  | `/api/db-check` | Verifies the database connection                                                          |
+| `POST` | `/api/contact`  | Body: `{ name, email, message }`. Saves the message to Postgres and emails it via Resend. |
 
 On startup the backend creates the `messages` table if it doesn't already exist.
 
