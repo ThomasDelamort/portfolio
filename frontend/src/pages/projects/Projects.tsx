@@ -4,7 +4,7 @@ import { FaGithub } from "react-icons/fa";
 import projects from "../../data/projects";
 import useScrollReveal from "../../hooks/useScrollReveal";
 
-const INTERVAL: number = 5000;
+const INTERVAL: number = 15000;
 
 const Projects = () => {
   const [current, setCurrent] = useState(0);
