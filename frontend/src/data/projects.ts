@@ -49,6 +49,7 @@ const projects: Project[] = [
       "TailwindCSS",
       "React",
       "FastAPI",
+      "PostgreSQL",
       "Docker",
       "Iot",
       "Bash",
