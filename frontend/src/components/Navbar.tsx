@@ -1,71 +1,48 @@
-// import { SiSaturn } from "react-icons/si";
-// import { GiBlackHoleBolas } from "react-icons/gi";
 import { GrArchlinux } from "react-icons/gr";
 import { Menu } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { useState } from "react";
+import sections from "../data/sections";
 
-const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Projects", href: "#projects" },
-  { label: "Skills", href: "#skills" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
-];
+const linkClass = (isActive: boolean) =>
+  `text-sm font-medium transition-colors hover:text-red-600 ${
+    isActive ? "text-red-500" : "text-gray-400"
+  }`;
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("Home");
-
-  useEffect(() => {
-    const onScroll = () => {
-      for (const link of [...navLinks].reverse()) {
-        const el = document.getElementById(link.label.toLowerCase());
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 120) {
-            setActiveSection(link.label);
-            break;
-          }
-        }
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const close = () => setOpen(false);
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-red-700/30 bg-black/80 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <a href="#home" className="flex items-center gap-2 group">
+        <Link to="/" onClick={close} className="flex items-center gap-2 group">
           <GrArchlinux className="w-6 h-6 mr-1 text-red-700 transition-colors group-hover:text-red-400 rotate-180" />
           <h3 className="text-2xl font-bold bg-linear-to-r from-red-700 via-red-500 to-red-400 bg-clip-text text-transparent">
             Neal
           </h3>
-        </a>
+        </Link>
 
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className={`text-sm font-medium transition-colors hover:text-red-600 ${
-                activeSection === link.label ? "text-red-500" : "text-gray-400"
-              }`}
+          {sections.map((section) => (
+            <NavLink
+              key={section.id}
+              to={section.path}
+              end={section.path === "/"}
+              className={({ isActive }) => linkClass(isActive)}
             >
-              {link.label}
-            </a>
+              {section.label}
+            </NavLink>
           ))}
         </div>
 
         <div className="hidden md:block">
-          <a
-            href="#contact"
+          <Link
+            to="/contact"
             className="rounded-md border-2 border-red-700 px-4 py-2 text-sm font-semibold text-red-500 transition-colors hover:bg-red-700 hover:text-white"
           >
             Get in touch
-          </a>
+          </Link>
         </div>
 
         <button
@@ -79,23 +56,24 @@ const Navbar = () => {
 
       {open && (
         <div className="md:hidden border-t border-red-700/30 px-6 py-4 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className={`text-sm font-medium hover:text-red-400 ${
-                activeSection === link.label ? "text-red-500" : "text-gray-400"
-              }`}
+          {sections.map((section) => (
+            <NavLink
+              key={section.id}
+              to={section.path}
+              end={section.path === "/"}
+              onClick={close}
+              className={({ isActive }) => linkClass(isActive)}
             >
-              {link.label}
-            </a>
+              {section.label}
+            </NavLink>
           ))}
-          <a
-            href="#contact"
+          <Link
+            to="/contact"
+            onClick={close}
             className="rounded-md border-2 border-red-700 px-4 py-2 text-center text-sm font-semibold text-red-500 hover:bg-red-700 hover:text-white transition-colors"
           >
             Get in touch
-          </a>
+          </Link>
         </div>
       )}
     </nav>
