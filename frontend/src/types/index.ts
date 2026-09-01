@@ -1,5 +1,14 @@
 import type { IconType } from "react-icons";
 
+// Section
+// One entry per <section id> on the single-page site. `id` must match the
+// element id rendered by the corresponding page component.
+export interface Section {
+  id: string;
+  path: string;
+  label: string;
+}
+
 // Panel types
 export type PanelSize = "sm" | "md" | "lg";
 export type PanelAlign = "top" | "center" | "bottom";

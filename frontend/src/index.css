@@ -131,6 +131,10 @@ section[id] {
 
 /* accessibility: no motion for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .reveal,
   .reveal-fade,
   .reveal-scale {

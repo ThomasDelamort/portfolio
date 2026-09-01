@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
-import Navbar from "./components/Navbar";
-import Hero from "./pages/hero/Hero";
-import Footer from "./components/Footer";
-import Projects from "./pages/projects/Projects";
-import Skills from "./pages/skills/Skills";
-import About from "./pages/about/About";
-import Contact from "./pages/contact/Contact";
-import Loader from "./components/Loader";
+import { Outlet } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import Loader from "../components/Loader";
+import useSectionSync from "../hooks/useSectionSync";
 
 const MIN_LOADER_MS = 3500;
 
-function App() {
+const RootLayout = () => {
   const [loading, setLoading] = useState(true);
+
+  useSectionSync(loading);
 
   useEffect(() => {
     const startTime = Date.now();
@@ -69,15 +68,11 @@ function App() {
       <Loader done={!loading} />
       <Navbar />
       <main>
-        <Hero />
-        <Projects />
-        <Skills />
-        <About />
-        <Contact />
+        <Outlet />
       </main>
       <Footer />
     </>
   );
-}
+};
 
-export default App;
+export default RootLayout;

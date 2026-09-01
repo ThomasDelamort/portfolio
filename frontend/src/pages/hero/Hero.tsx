@@ -1,4 +1,5 @@
 import { Download, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 import RotatingRole from "./components/RotatingRole";
 
 const Hero = () => {
@@ -33,10 +34,10 @@ const Hero = () => {
                   <Download className="w-5 h-5" />
                   Resume
                 </a>
-                <a href="#contact" className="btn-contact">
+                <Link to="/contact" className="btn-contact">
                   Contact Me
                   <Mail className="w-5 h-5" />
-                </a>
+                </Link>
               </div>
             </div>
 
