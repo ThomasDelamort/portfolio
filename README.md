@@ -29,11 +29,13 @@ This repo is a monorepo with two independently deployable pieces:
 
 The site is one long scroll made up of five sections — **Hero, Projects, Skills,
 About, Contact** — plus a min-duration boot loader that waits for images before
-revealing the page.
+revealing the page. Each section has its own route (`/`, `/projects`, `/skills`,
+`/about`, `/contact`); all of them render the same page, and `useSectionSync`
+keeps the URL and scroll position in sync as you navigate.
 
 ## Tech stack
 
-- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS 4, Framer Motion, React Icons, oxlint
+- **Frontend:** React 19, TypeScript, Vite, React Router, Tailwind CSS 4, Framer Motion, React Icons, oxlint
 - **Backend:** Node.js, Express 5, TypeScript, node-postgres (`pg`), Resend, tsx
 - **Database:** PostgreSQL ([Neon](https://neon.tech) in production)
 - **Infra:** Docker (backend), deployed on [Render](https://render.com)
@@ -45,11 +47,14 @@ portfolio/
 ├── frontend/
 │   ├── public/              # static assets (project screenshots, photos, resume.pdf)
 │   └── src/
+│       ├── router.tsx       # React Router route tree
+│       ├── layouts/         # RootLayout — Navbar/Footer/Loader shell around <Outlet />
 │       ├── components/      # Navbar, Footer, Loader
-│       ├── pages/           # hero/, projects/, skills/, about/, contact/
-│       ├── data/            # projects.ts, skills.ts, panels.ts (content lives as data)
+│       ├── pages/           # home/ (renders all sections), hero/, projects/, skills/,
+│       │                    # about/, contact/, error/ (ErrorPage, NotFound)
+│       ├── data/            # projects.ts, skills.ts, panels.ts, sections.ts (content lives as data)
 │       ├── services/        # contact.service.ts — talks to the backend API
-│       ├── hooks/           # useScrollReveal
+│       ├── hooks/           # useScrollReveal, useSectionSync (syncs route <-> scroll position)
 │       └── types/
 └── backend/
     ├── Dockerfile
