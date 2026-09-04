@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: portfolio-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: portfolio-backend
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
