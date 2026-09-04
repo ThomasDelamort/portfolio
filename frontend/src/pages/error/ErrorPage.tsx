@@ -26,7 +26,7 @@ const ErrorPage = () => {
             <h1 className="text-[clamp(3rem,10vw,7rem)] leading-none font-extrabold bg-linear-to-r from-red-400 via-red-700 to-red-900 bg-clip-text text-transparent">
               {status}
             </h1>
-            <p className="text-gray-400 text-lg break-words">{message}</p>
+            <p className="text-gray-400 text-lg wrap-break-word">{message}</p>
             <Link to="/" className="btn-contact inline-flex">
               Back home
             </Link>
