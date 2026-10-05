@@ -2,6 +2,24 @@ import type { Project } from "../types/index.ts";
 
 const projects: Project[] = [
   {
+    title: "Bull's Coffee",
+    description:
+      "A fullstack coffee shop application that allows users to browse, order, and manage their coffee preferences.",
+    image: "",
+    tags: [
+      "TypeScript",
+      "MongoDB",
+      "Express",
+      "React",
+      "NodeJS",
+      "TailwindCSS",
+      "AWS S3",
+    ],
+    liveUrl: "https://bullscoffee.vercel.app/",
+    githubUrl: "",
+    year: "2026",
+  },
+  {
     title: "Smart Library System",
     description:
       "A web-based library platform for seamless borrowing, tracking, reservations, approvals, and administration.",
