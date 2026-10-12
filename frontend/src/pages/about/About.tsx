@@ -1,5 +1,18 @@
-import { useRef, useState, useEffect } from "react";
-import type { SizeMap, AlignMap } from "../../types/index.ts";
+import { useEffect, useRef } from "react";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import type { MotionValue } from "framer-motion";
+import type {
+  SizeMap,
+  AlignMap,
+  PhotoPanel,
+  QuotePanel,
+} from "../../types/index.ts";
 import panels from "../../data/panels";
 
 const sizeMap: SizeMap = {
@@ -14,34 +27,115 @@ const alignMap: AlignMap = {
   bottom: "self-end mb-8",
 };
 
+interface PanelProps<T> {
+  panel: T;
+  index: number;
+  progress: MotionValue<number>;
+  still: boolean;
+}
+
+// How far the track has travelled past this panel, roughly -1..1.
+const relativeTo = (progress: number, index: number) =>
+  progress - index / (panels.length - 1);
+
+const Quote = ({ panel, progress, still }: PanelProps<QuotePanel>) => {
+  // The three lines peel apart as the track carries them away.
+  const fillX = useTransform(progress, [0, 1], [0, 40]);
+  const accentX = useTransform(progress, [0, 1], [0, 100]);
+
+  return (
+    <div className="shrink-0 w-75 sm:w-95 self-center">
+      <p className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight">
+        {panel.text}
+      </p>
+      <motion.p
+        className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight"
+        style={still ? undefined : { x: fillX }}
+      >
+        {panel.fill}
+      </motion.p>
+      <motion.p
+        className="text-3xl sm:text-5xl font-extrabold text-red-600 leading-tight tracking-tight"
+        style={still ? undefined : { x: accentX }}
+      >
+        {panel.accent}
+      </motion.p>
+    </div>
+  );
+};
+
+const Photo = ({ panel, index, progress, still }: PanelProps<PhotoPanel>) => {
+  // The frame bobs on its own depth layer while the photo slides inside it
+  // against the direction of travel, like looking through a window.
+  const lift = index % 2 === 0 ? 50 : -50;
+  const frameY = useTransform(progress, (p) => relativeTo(p, index) * lift);
+  const imageX = useTransform(
+    progress,
+    (p) => `${Math.max(-11, Math.min(11, relativeTo(p, index) * 22))}%`,
+  );
+
+  return (
+    <motion.figure
+      className={`group shrink-0 ${alignMap[panel.align] || "self-center"}`}
+      style={still ? undefined : { y: frameY }}
+    >
+      <div
+        className={`relative overflow-hidden rounded-lg border border-white/10 ${sizeMap[panel.size] || sizeMap.md}`}
+      >
+        <motion.img
+          src={panel.image}
+          alt={panel.caption}
+          className="w-full h-full object-cover scale-125 grayscale-40 transition-[filter,scale] duration-700 group-hover:grayscale-0 group-hover:scale-[1.32]"
+          style={still ? undefined : { x: imageX }}
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent pointer-events-none" />
+      </div>
+      <figcaption className="mt-3 font-mono text-xs flex items-center gap-3">
+        <span className="text-red-500 uppercase tracking-wider">
+          {panel.caption}
+        </span>
+        {panel.tag && (
+          <>
+            <span className="h-px w-6 bg-white/20" />
+            <span className="text-gray-500">{panel.tag}</span>
+          </>
+        )}
+      </figcaption>
+    </motion.figure>
+  );
+};
+
 const About = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [x, setX] = useState(0);
+  const still = useReducedMotion() ?? false;
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  // How far the track must slide to bring its last panel into view.
+  const maxX = useMotionValue(0);
+  const x = useTransform(
+    [scrollYProgress, maxX],
+    ([p, max]: number[]) => -p * max,
+  );
 
   useEffect(() => {
-    const onScroll = () => {
-      const section = sectionRef.current;
-      const track = trackRef.current;
-      if (!section || !track) return;
-
-      const rect = section.getBoundingClientRect();
-      const scrollDistance = section.offsetHeight - window.innerHeight;
-
-      const progress = Math.min(Math.max(-rect.top / scrollDistance, 0), 1);
-
-      const maxX = track.scrollWidth - window.innerWidth;
-      setX(progress * maxX);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    onScroll();
+    const track = trackRef.current;
+    if (!track) return;
+    const measure = () =>
+      maxX.set(Math.max(track.scrollWidth - window.innerWidth, 0));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    window.addEventListener("resize", measure);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
     };
-  }, []);
+  }, [maxX]);
 
   return (
     <section id="about" ref={sectionRef} className="relative h-[300vh] my-24">
@@ -56,58 +150,31 @@ const About = () => {
           </h2>
         </div>
 
-        <div
+        <motion.div
           ref={trackRef}
           className="flex items-stretch gap-8 sm:gap-16 px-6 sm:px-12 will-change-transform"
-          style={{ transform: `translatex(-${x}px)` }}
+          style={{ x }}
         >
-          {panels.map((panel, i) => {
-            if (panel.type === "quote") {
-              return (
-                <div key={i} className="shrink-0 w-75 sm:w-95 self-center">
-                  <p className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight">
-                    {panel.text}
-                  </p>
-                  <p className="text-3xl sm:text-5xl font-extrabold text-zinc-200 leading-tight tracking-tight">
-                    {panel.fill}
-                  </p>
-                  <p className="text-3xl sm:text-5xl font-extrabold text-red-600 leading-tight tracking-tight">
-                    {panel.accent}
-                  </p>
-                </div>
-              );
-            }
-
-            return (
-              <figure
+          {panels.map((panel, i) =>
+            panel.type === "quote" ? (
+              <Quote
                 key={i}
-                className={`group shrink-0 ${alignMap[panel.align] || "self-center"}`}
-              >
-                <div
-                  className={`relative overflow-hidden rounded-lg border border-white/10 ${sizeMap[panel.size] || sizeMap.md}`}
-                >
-                  <img
-                    src={panel.image}
-                    alt={panel.caption}
-                    className="w-full h-full object-cover grayscale-40 transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent pointer-events-none" />
-                </div>
-                <figcaption className="mt-3 font-mono text-xs flex items-center gap-3">
-                  <span className="text-red-500 uppercase tracking-wider">
-                    {panel.caption}
-                  </span>
-                  {panel.tag && (
-                    <>
-                      <span className="h-px w-6 bg-white/20" />
-                      <span className="text-gray-500">{panel.tag}</span>
-                    </>
-                  )}
-                </figcaption>
-              </figure>
-            );
-          })}
-        </div>
+                panel={panel}
+                index={i}
+                progress={scrollYProgress}
+                still={still}
+              />
+            ) : (
+              <Photo
+                key={i}
+                panel={panel}
+                index={i}
+                progress={scrollYProgress}
+                still={still}
+              />
+            ),
+          )}
+        </motion.div>
 
         <div className="max-w-6xl mx-auto w-full px-6 mt-8 shrink-0">
           <p className="font-mono text-xs text-gray-600">↓ keep scrolling</p>
