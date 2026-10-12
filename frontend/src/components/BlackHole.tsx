@@ -149,9 +149,11 @@ const BlackHole = ({
       last = now;
       time += Math.min(dt, 50) / 1000;
 
+      // Ease back upright once the pointer stops being followed.
+      const follow = settings.current.followPointer;
       const ease = 1 - Math.exp(-dt / 220);
-      pointer.x += (pointer.tx - pointer.x) * ease;
-      pointer.y += (pointer.ty - pointer.y) * ease;
+      pointer.x += ((follow ? pointer.tx : 0) - pointer.x) * ease;
+      pointer.y += ((follow ? pointer.ty : 0) - pointer.y) * ease;
 
       draw();
 

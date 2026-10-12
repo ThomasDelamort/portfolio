@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { KeyboardEvent } from "react";
+import type { KeyboardEvent, RefObject } from "react";
 import {
   AnimatePresence,
   motion,
@@ -14,7 +14,7 @@ import type { MotionValue } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import projects from "../../data/projects";
-import BlackHole from "../../components/BlackHole";
+import BlackHoleFlight from "../../components/BlackHoleFlight";
 import type { Project } from "../../types/index.ts";
 
 const LAST = projects.length - 1;
@@ -28,6 +28,9 @@ const SCROLL_PER_PROJECT = 55;
 const HOLD = 0.4;
 // Elevation the orbit is viewed from; the black hole camera uses the same.
 const ORBIT_TILT = 0.22;
+// The hero views the black hole from lower down; the camera swings up from
+// there as the hole flies into the orbit.
+const HERO_TILT = 0.12;
 const MAX_TAGS = 8;
 
 const clamp = (v: number, min: number, max: number) =>
@@ -169,9 +172,15 @@ const detailVariants = {
   exit: (dir: number) => ({ opacity: 0, x: -40 * dir }),
 };
 
-const Projects = () => {
+interface ProjectsProps {
+  /** Marks where the black hole rests in the hero; it flies in from there. */
+  heroHole?: RefObject<HTMLElement | null>;
+}
+
+const Projects = ({ heroHole }: ProjectsProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const holeRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 
   // From the stage pinning under the navbar to the section's last pixel.
@@ -261,8 +270,8 @@ const Projects = () => {
       }}
     >
       <div className="sticky top-20 flex h-[calc(100svh-5rem)] flex-col overflow-hidden">
-        {/* Header */}
-        <div className="mx-auto w-full max-w-6xl shrink-0 px-6 pt-6 sm:pt-10">
+        {/* Header. z-10 keeps it above the black hole as it flies in. */}
+        <div className="relative z-10 mx-auto w-full max-w-6xl shrink-0 px-6 pt-6 sm:pt-10">
           <div className="flex items-end justify-between border-b border-white/10 pb-5">
             <div>
               <span className="font-mono text-xs uppercase tracking-[0.25em] text-red-500">
@@ -287,14 +296,23 @@ const Projects = () => {
 
         {/* Orbit stage */}
         <div ref={stageRef} className="relative isolate min-h-0 flex-1">
+          {/* Where the black hole docks at the centre of the orbit */}
           <div
+            ref={holeRef}
             aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-[44%] z-50 aspect-video -translate-x-1/2 -translate-y-1/2"
+            className="pointer-events-none invisible absolute left-1/2 top-[44%] aspect-video -translate-x-1/2 -translate-y-1/2"
             style={{ width: holeWidth }}
-          >
-            <div className="absolute inset-x-[25%] inset-y-[32%] rounded-full bg-orange-600/15 blur-[80px]" />
-            <BlackHole tilt={ORBIT_TILT} zoom={0.9} />
-          </div>
+          />
+          {/* The hero's black hole, flown in. It renders here, at z 50 in the
+              stage, so the orbiting cards pass in front of and behind it. */}
+          <BlackHoleFlight
+            from={heroHole}
+            to={holeRef}
+            landing={sectionRef}
+            landTop={NAV_HEIGHT}
+            fromTilt={HERO_TILT}
+            toTilt={ORBIT_TILT}
+          />
 
           {projects.map((p, i) => (
             <OrbitCard
@@ -311,7 +329,7 @@ const Projects = () => {
         </div>
 
         {/* Active project */}
-        <div className="mx-auto w-full max-w-6xl shrink-0 px-6 pb-5 sm:pb-8">
+        <div className="relative z-10 mx-auto w-full max-w-6xl shrink-0 px-6 pb-5 sm:pb-8">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-12">
             <div className="relative min-h-44 sm:min-h-40" aria-live="polite">
               <AnimatePresence
