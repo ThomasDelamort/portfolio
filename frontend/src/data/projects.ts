@@ -26,6 +26,16 @@ const projects: Project[] = [
     year: "2026",
   },
   {
+    title: "Abacadabra",
+    description:
+      "A UI fork of Bull's Coffee, Abacadabra is my own UI design for Abaca Group",
+    image: "/projects/abacadabra.png",
+    tags: ["React", "TypeScript"],
+    liveUrl: "https://abacadabra-chi.vercel.app/",
+    githubUrl: "",
+    year: "2026",
+  },
+  {
     title: "Smart Library System",
     description:
       "A web-based library platform for seamless borrowing, tracking, reservations, approvals, and administration.",
