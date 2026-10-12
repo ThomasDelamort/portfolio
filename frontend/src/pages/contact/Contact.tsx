@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Mail, MapPin, Send } from "lucide-react";
 import useScrollReveal from "../../hooks/useScrollReveal";
+import Parallax from "../../components/Parallax";
 import { sendContact } from "../../services/contact.service.ts";
 import type { ContactForm } from "../../types/index.ts";
 
@@ -48,22 +49,36 @@ const Contact = () => {
     <section
       id="contact"
       ref={revealRef}
-      className={`w-full bg-black py-10 px-6 reveal ${isVisible ? "reveal-visible" : ""}`}
+      className={`relative w-full py-10 px-6 reveal ${isVisible ? "reveal-visible" : ""}`}
     >
+      {/* Oversized outline word drifting the opposite way to Skills' */}
+      <Parallax
+        axis="x"
+        offset={160}
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 select-none"
+      >
+        <p
+          aria-hidden="true"
+          className="whitespace-nowrap text-right text-[22vw] font-black leading-none tracking-tighter text-transparent [-webkit-text-stroke:1px_rgba(239,68,68,0.12)]"
+        >
+          HELLO
+        </p>
+      </Parallax>
+
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="border-b border-white/10 pb-6 mb-14">
+        <Parallax offset={-25} className="border-b border-white/10 pb-6 mb-14">
           <span className="font-mono text-xs tracking-[0.25em] uppercase text-red-500">
             Reach out
           </span>
           <h2 className="mt-3 text-4xl sm:text-6xl font-extrabold tracking-tight text-white">
             Let's get right to it
           </h2>
-        </div>
+        </Parallax>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Left: direct info + socials */}
-          <div className="space-y-8">
+          <Parallax offset={15} className="space-y-8">
             <p className="text-gray-400 text-lg leading-relaxed max-w-md">
               Have a project in mind, an opportunity, or just want to say hi? My
               inbox is always open.
@@ -87,78 +102,80 @@ const Contact = () => {
             </div>
 
             {/* Socials */}
-          </div>
+          </Parallax>
 
-          {/* Right: form */}
-          <form
-            className="space-y-5"
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
-          >
-            <div>
-              <label className="block font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">
-                Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Your name"
-                required
-                className="w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-4 py-3 text-white placeholder-gray-600 outline-none transition-colors focus:border-red-600"
-              />
-            </div>
-
-            <div>
-              <label className="block font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="you@email.com"
-                required
-                className="w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-4 py-3 text-white placeholder-gray-600 outline-none transition-colors focus:border-red-600"
-              />
-            </div>
-
-            <div>
-              <label className="block font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">
-                Message
-              </label>
-              <textarea
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                rows={5}
-                placeholder="Tell me about it..."
-                required
-                className="w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-4 py-3 text-white placeholder-gray-600 outline-none transition-colors focus:border-red-600 resize-none"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex items-center justify-center gap-2 w-full rounded-full bg-red-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-red-900/40 transition-all hover:bg-red-500 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed"
+          {/* Right: form, on a nearer layer than the copy beside it */}
+          <Parallax offset={40}>
+            <form
+              className="space-y-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
             >
-              {loading ? "Sending..." : "Send Message"}
-              <Send className="w-4 h-4" />
-            </button>
+              <div>
+                <label className="block font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Your name"
+                  required
+                  className="w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-4 py-3 text-white placeholder-gray-600 outline-none transition-colors focus:border-red-600"
+                />
+              </div>
 
-            {success && (
-              <p className="text-center text-green-500 text-sm">{success}</p>
-            )}
+              <div>
+                <label className="block font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="you@email.com"
+                  required
+                  className="w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-4 py-3 text-white placeholder-gray-600 outline-none transition-colors focus:border-red-600"
+                />
+              </div>
 
-            {error && (
-              <p className="text-center text-red-500 text-sm">{error}</p>
-            )}
-          </form>
+              <div>
+                <label className="block font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">
+                  Message
+                </label>
+                <textarea
+                  name="message"
+                  value={form.message}
+                  onChange={handleChange}
+                  rows={5}
+                  placeholder="Tell me about it..."
+                  required
+                  className="w-full rounded-lg border border-white/10 bg-[#0d0d0d] px-4 py-3 text-white placeholder-gray-600 outline-none transition-colors focus:border-red-600 resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex items-center justify-center gap-2 w-full rounded-full bg-red-600 px-8 py-3 text-lg font-semibold text-white shadow-lg shadow-red-900/40 transition-all hover:bg-red-500 hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Sending..." : "Send Message"}
+                <Send className="w-4 h-4" />
+              </button>
+
+              {success && (
+                <p className="text-center text-green-500 text-sm">{success}</p>
+              )}
+
+              {error && (
+                <p className="text-center text-red-500 text-sm">{error}</p>
+              )}
+            </form>
+          </Parallax>
         </div>
       </div>
     </section>

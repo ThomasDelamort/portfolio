@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Loader from "../components/Loader";
+import Starfield from "../components/Starfield";
 import useSectionSync from "../hooks/useSectionSync";
 
 const MIN_LOADER_MS = 3500;
@@ -66,8 +67,11 @@ const RootLayout = () => {
   return (
     <>
       <Loader done={!loading} />
+      <Starfield />
       <Navbar />
-      <main>
+      {/* clip, not hidden: hidden would make <main> a scroll container and
+          break the sticky, scroll-pinned sections inside it */}
+      <main className="overflow-x-clip">
         <Outlet />
       </main>
       <Footer />
