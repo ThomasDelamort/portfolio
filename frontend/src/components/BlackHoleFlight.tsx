@@ -3,13 +3,6 @@ import type { RefObject } from "react";
 import { useMotionValue, useReducedMotion } from "framer-motion";
 import BlackHole from "./BlackHole";
 
-// How much bigger than its resting size the hole gets mid-flight, as it swoops
-// toward the camera.
-const APPROACH = 0.6;
-// How far it is drawn toward the middle of the screen at its closest.
-const CENTER_PULL = 0.7;
-// Extra camera elevation at its closest: the view swings up over the disk.
-const SWING = 0.15;
 // Share of the flight after which it is headed for the dock: it stops leaning
 // toward the pointer, and with reduced motion it jumps there.
 const SETTLE = 0.5;
@@ -50,8 +43,8 @@ interface BlackHoleFlightProps {
 
 /**
  * One black hole shared by two sections. It rests at `from`; as the page
- * scrolls it swoops toward the camera, then shrinks away into `to`, landing
- * just as the stage pins. Scrolling back up flies it home again.
+ * scrolls it shrinks away into `to`, landing just as the stage pins.
+ * Scrolling back up flies it home again.
  *
  * In flight it is pinned to the screen; docked, it sits in the stage and
  * scrolls natively with it. Either way it lives in the stage's stacking
@@ -104,19 +97,13 @@ const BlackHoleFlight = ({
         const start = poseOf(origin, p * travel);
         const end = poseOf(dock, -(1 - p) * travel);
         const t = p * p * (3 - 2 * p);
-        // 0 at both ends, closest about 40% of the way in.
-        const near = Math.sin(Math.PI * p ** 0.75) ** 2;
-        const pull = near * CENTER_PULL;
+        // Straight down into the dock, shrinking on the way.
         pose = {
-          x: mix(
-            mix(start.x, end.x, t),
-            document.documentElement.clientWidth / 2,
-            pull,
-          ),
-          y: mix(mix(start.y, end.y, t), (landTop + vh) / 2, pull),
-          w: mix(start.w, end.w, t) * (1 + near * APPROACH),
+          x: mix(start.x, end.x, t),
+          y: mix(start.y, end.y, t),
+          w: mix(start.w, end.w, t),
         };
-        tilt = (toTilt - fromTilt) * t + near * SWING;
+        tilt = (toTilt - fromTilt) * t;
       }
 
       // The box keeps the larger marker's size and is scaled to the pose, so

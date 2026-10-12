@@ -41,6 +41,14 @@ const panels: Panel[] = [
   },
   {
     type: "photo",
+    image: "/panels/Hackit.jpg",
+    caption: "HackIT2026",
+    tag: "Killing it",
+    size: "lg",
+    align: "center",
+  },
+  {
+    type: "photo",
     image: "/panels/dev.jpg",
     caption: "Now",
     tag: "Building what's next",

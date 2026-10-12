@@ -222,7 +222,8 @@ const Projects = ({ heroHole }: ProjectsProps) => {
       const { width, height } = entry.contentRect;
       stageWidth.set(width);
       stageHeight.set(height);
-      setHoleWidth(Math.min(width * 0.95, height * 1.9));
+      // Smaller than where it rests in the hero, so it shrinks on the way in.
+      setHoleWidth(Math.min(width * 0.7, height * 1.4));
     });
     observer.observe(stage);
     return () => observer.disconnect();
