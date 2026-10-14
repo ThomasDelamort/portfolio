@@ -2,6 +2,27 @@ import type { Project } from "../types/index.ts";
 
 const projects: Project[] = [
   {
+    title: "AirSiloy",
+    description:
+      "An AI Powered IoT-based air quality monitoring system that detects and analyzes environmental air conditions in real time, providing alerts and actionable insights when air quality reaches unhealthy levels.",
+    image: "/projects/AirSiloy.png",
+    tags: [
+      "TypeScript",
+      "TailwindCSS",
+      "React",
+      "FastAPI",
+      "PostgreSQL",
+      "Docker",
+      "Iot",
+      "Bash",
+      "Clerk",
+      "Rust",
+    ],
+    liveUrl: "",
+    githubUrl: "https://github.com/ThomasDelamort/AirSiloy",
+    year: "2026",
+  },
+  {
     title: "Bull's Coffee",
     description:
       "A fullstack coffee shop application that allows users to browse, order, and manage their coffee preferences.",
@@ -26,12 +47,19 @@ const projects: Project[] = [
     year: "2026",
   },
   {
-    title: "Abacadabra",
-    description:
-      "A UI fork of Bull's Coffee, Abacadabra is my own UI design for Abaca Group",
-    image: "/projects/abacadabra.png",
-    tags: ["React", "TypeScript"],
-    liveUrl: "https://abacadabra-chi.vercel.app/",
+    title: "NU-Student Identification System",
+    description: "NU Cebu rfid card tapping student indentification and ",
+    image: "/projects/nusis.png",
+    tags: [
+      "TypeScript",
+      "PostgreSQL",
+      "NodeJS",
+      "Express",
+      "TailwindCSS",
+      "AWS S3",
+      "RFID UID Scanner",
+    ],
+    liveUrl: "",
     githubUrl: "",
     year: "2026",
   },
@@ -74,26 +102,6 @@ const projects: Project[] = [
     year: "2026",
   },
   {
-    title: "AirSiloy",
-    description:
-      "An AI Powered IoT-based air quality monitoring system that detects and analyzes environmental air conditions in real time, providing alerts and actionable insights when air quality reaches unhealthy levels.",
-    image: "/projects/AirSiloy.png",
-    tags: [
-      "TypeScript",
-      "TailwindCSS",
-      "React",
-      "FastAPI",
-      "PostgreSQL",
-      "Docker",
-      "Iot",
-      "Bash",
-      "Clerk",
-    ],
-    liveUrl: "",
-    githubUrl: "https://github.com/ThomasDelamort/AirSiloy",
-    year: "2026",
-  },
-  {
     title: "Portfolio Website",
     description:
       "The fullstack application that not only showcases my projects but also who I am as a person.",
@@ -119,6 +127,16 @@ const projects: Project[] = [
     tags: ["PostgreSQL", "Express", "React", "NodeJS", "TailwindCSS", "Neon"],
     liveUrl: "https://will-you-go-out-with-me-zvgh.onrender.com/",
     githubUrl: "https://github.com/ThomasDelamort/willYouGoOutOnADateWithMe",
+    year: "2026",
+  },
+  {
+    title: "Abacadabra",
+    description:
+      "A UI fork of Bull's Coffee, Abacadabra is my own UI design for Abaca Group",
+    image: "/projects/abacadabra.png",
+    tags: ["React", "TypeScript"],
+    liveUrl: "https://abacadabra-chi.vercel.app/",
+    githubUrl: "",
     year: "2026",
   },
 ];

@@ -15,6 +15,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import projects from "../../data/projects";
 import BlackHoleFlight from "../../components/BlackHoleFlight";
+import ProjectModal from "../../components/ProjectModal";
 import type { Project } from "../../types/index.ts";
 
 const LAST = projects.length - 1;
@@ -109,7 +110,7 @@ const OrbitCard = ({
     <motion.button
       type="button"
       onClick={() => onSelect(index)}
-      aria-label={`Show ${project.title}`}
+      aria-label={`View details for ${project.title}`}
       aria-current={active ? "true" : undefined}
       className="group absolute left-1/2 top-1/2 w-[clamp(190px,52vw,280px)] text-left will-change-transform focus:outline-none md:w-[clamp(240px,23vw,340px)]"
       style={{ transform, zIndex, opacity, filter }}
@@ -199,6 +200,9 @@ const Projects = ({ heroHole }: ProjectsProps) => {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
   const activeRef = useRef(0);
+  // Project shown in the closer-look modal, if any.
+  const [selected, setSelected] = useState<number | null>(null);
+  const closeModal = useCallback(() => setSelected(null), []);
 
   useMotionValueEvent(orbit, "change", (o) => {
     // Hysteresis: hand over only once the orbit is clearly past the midpoint,
@@ -247,6 +251,8 @@ const Projects = ({ heroHole }: ProjectsProps) => {
   );
 
   const onKeyDown = (e: KeyboardEvent<HTMLElement>) => {
+    // The modal is portalled, but its key events still bubble through here.
+    if (selected !== null) return;
     if (e.key === "ArrowRight" && active < LAST) {
       e.preventDefault();
       scrollToProject(active + 1);
@@ -324,7 +330,7 @@ const Projects = ({ heroHole }: ProjectsProps) => {
               stageWidth={stageWidth}
               stageHeight={stageHeight}
               active={i === active}
-              onSelect={scrollToProject}
+              onSelect={setSelected}
             />
           ))}
         </div>
@@ -437,6 +443,18 @@ const Projects = ({ heroHole }: ProjectsProps) => {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {selected !== null && (
+          <ProjectModal
+            key={selected}
+            project={projects[selected]}
+            index={selected}
+            total={projects.length}
+            onClose={closeModal}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

@@ -21,6 +21,7 @@ import {
   SiClaudecode,
   SiClaude,
   SiSqlite,
+  SiGooglegemini,
 } from "react-icons/si";
 // FaAws
 // FaDocker
@@ -91,6 +92,7 @@ const skillGroups: SkillGroup[] = [
     skills: [
       { name: "Claude", icon: SiClaude },
       { name: "Claude Code", icon: SiClaudecode },
+      { name: "Gemini", icon: SiGooglegemini },
     ],
   },
 ];
