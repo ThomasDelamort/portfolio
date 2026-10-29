@@ -1,0 +1,88 @@
+name: Vercel Deploy
+
+# Pushes to main deploy to production; pull requests get a preview deployment.
+# Builds happen on the runner (`vercel build`) and the output is uploaded
+# prebuilt, so GitHub Actions is the only thing triggering deployments --
+# disable the Vercel Git integration for this project to avoid double deploys.
+#
+# Required repo secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID.
+# The Vercel project's Root Directory must be set to `frontend`.
+# VITE_API_URL is read from the Vercel project's environment variables.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/vercel.yaml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/vercel.yaml"
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-${{ github.ref }}
+  # Only supersede stale preview runs; never cancel a production deploy midway.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  # Production for pushes to main and manual runs on main; preview otherwise.
+  VERCEL_ENV: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && 'production' || 'preview' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Secrets aren't available to PRs from forks, so skip those.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      # Run from the repo root: the project's Root Directory setting (frontend)
+      # is applied by the CLI, so don't set working-directory here.
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=${{ env.VERCEL_ENV }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build
+        run: vercel build ${{ env.VERCEL_ENV == 'production' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt ${{ env.VERCEL_ENV == 'production' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "### Deployed to ${{ env.VERCEL_ENV }}: $url" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment preview URL on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+        with:
+          script: |
+            const marker = "<!-- vercel-preview -->";
+            const body = `${marker}\nPreview deployed: ${process.env.DEPLOY_URL}\n\nCommit: ${context.sha}`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find((c) => c.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
