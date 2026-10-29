@@ -11,6 +11,7 @@ import {
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
+  useScroll,
   useSpring,
   useTransform,
 } from "framer-motion";
@@ -27,8 +28,12 @@ const COUNT = projects.length;
 const LAST = COUNT - 1;
 const STEP = (Math.PI * 2) / COUNT;
 
-// Matches the h-20 navbar the section sits under.
+// Matches the h-20 navbar the pinned stage sits under.
 const NAV_HEIGHT = 80;
+// Viewport heights of scrolling it takes to bring the next project around.
+const SCROLL_PER_PROJECT = 55;
+// Share of each project's scroll segment spent parked at the front.
+const HOLD = 0.4;
 // Elevation the orbit is viewed from; the black hole camera uses the same.
 const ORBIT_TILT = 0.22;
 // The hero views the black hole from lower down; the camera swings up from
@@ -58,6 +63,15 @@ const ringDelta = (to: number, from: number) =>
   mod(to - from + COUNT / 2, COUNT) - COUNT / 2;
 
 const pad = (n: number) => String(n + 1).padStart(2, "0");
+
+// Scroll progress -> orbit position. Plateaus at every whole number, so each
+// project parks at the front for a beat before the orbit swings on.
+const toOrbit = (progress: number) => {
+  const f = clamp(progress, 0, 1) * LAST;
+  const i = Math.floor(f);
+  const t = clamp((f - i - HOLD / 2) / (1 - HOLD), 0, 1);
+  return i + t * t * (3 - 2 * t);
+};
 
 // Where a card sits when it is `offset` slots away from the front of the
 // orbit. cos = 1 is nearest the viewer, -1 is the far side behind the hole.
@@ -199,10 +213,20 @@ const Projects = ({ heroHole }: ProjectsProps) => {
   const holeRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 
-  // Where the orbit is headed. Never wrapped: every whole number puts a project
-  // at the front, and since the cards sit on a circle, running past the last
-  // one comes round to the first (and the other way for negative values).
-  const target = useMotionValue(0);
+  // Scrolling down tours the orbit: from the stage pinning under the navbar to
+  // the section's last pixel, every project parks at the front in turn.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: [`start ${NAV_HEIGHT}px`, "end end"],
+  });
+  const stepped = useTransform(scrollYProgress, toOrbit);
+  // Sideways input turns the orbit on top of that, in whole projects once it
+  // settles. Never wrapped: the cards sit on a circle, so turning past the last
+  // project comes round to the first, and the other way for negative turns.
+  // Because the two add up, a full scroll down still shows every project once,
+  // just starting from wherever sideways input left the orbit.
+  const turns = useMotionValue(0);
+  const target = useTransform([stepped, turns], ([s, t]: number[]) => s + t);
   const smoothed = useSpring(target, {
     stiffness: 120,
     damping: 24,
@@ -248,19 +272,19 @@ const Projects = ({ heroHole }: ProjectsProps) => {
   }, [stageWidth, stageHeight]);
 
   // Sideways input spins the orbit freely while it arrives, then the orbit
-  // glides on to the nearest project once input stops. `burstFrom` is the slot
-  // the orbit rested on when the current burst began.
+  // glides on to the nearest project once input stops. `burstFrom` is the
+  // number of turns the orbit rested on when the current burst began.
   const burstFrom = useRef<number | null>(null);
   const settleTimer = useRef(0);
 
   const nudge = useCallback(
     (delta: number) => {
       if (burstFrom.current === null) {
-        burstFrom.current = Math.round(target.get());
+        burstFrom.current = Math.round(turns.get());
       }
-      target.set(target.get() + delta);
+      turns.set(turns.get() + delta);
     },
-    [target],
+    [turns],
   );
 
   // `lead` is extra travel to count, e.g. the momentum of a fling.
@@ -270,23 +294,23 @@ const Projects = ({ heroHole }: ProjectsProps) => {
       const from = burstFrom.current;
       if (from === null) return;
       burstFrom.current = null;
-      const travelled = target.get() + lead - from;
+      const travelled = turns.get() + lead - from;
       const slots =
         Math.abs(travelled) < FLICK
           ? 0
           : Math.sign(travelled) * Math.max(1, Math.round(Math.abs(travelled)));
-      target.set(from + slots);
+      turns.set(from + slots);
     },
-    [target],
+    [turns],
   );
 
   const goBy = useCallback(
     (slots: number) => {
       window.clearTimeout(settleTimer.current);
       burstFrom.current = null;
-      target.set(Math.round(target.get()) + slots);
+      turns.set(Math.round(turns.get()) + slots);
     },
-    [target],
+    [turns],
   );
 
   // Jump to a project by whichever way round the ring is shorter.
@@ -298,9 +322,26 @@ const Projects = ({ heroHole }: ProjectsProps) => {
     [target, goBy],
   );
 
-  // Trackpad swipes and shift + wheel. Vertical scrolling is left alone so it
-  // carries on down the page; the listener has to be non-passive only so that a
-  // sideways swipe doesn't also trigger the browser's back/forward gesture.
+  // Leaving the section undoes the sideways turns, so scrolling back in always
+  // tours the projects in order: from the first coming down, the last going up.
+  // The orbit swings back while off screen. (Not spring.jump(): that would also
+  // detach the spring from `target` for good.)
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting || turns.get() === 0) return;
+      window.clearTimeout(settleTimer.current);
+      burstFrom.current = null;
+      turns.set(0);
+    });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [turns]);
+
+  // Trackpad swipes and shift + wheel. Vertical scrolling is left alone: it
+  // scrolls the page, which tours the orbit. The listener has to be non-passive
+  // only so a sideways swipe doesn't also trigger the browser's back gesture.
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -319,8 +360,8 @@ const Projects = ({ heroHole }: ProjectsProps) => {
   useEffect(() => () => window.clearTimeout(settleTimer.current), []);
 
   // Dragging the stage with a finger or a mouse. The stage is touch-action:
-  // pan-y, so a vertical swipe still scrolls the page and only sideways moves
-  // reach us. `moved` outlives the press so the click that follows a drag can
+  // pan-y, so a vertical swipe still scrolls the page (and so tours the orbit)
+  // and only sideways moves reach us. `moved` outlives the press so the click that follows a drag can
   // be swallowed instead of opening the project underneath.
   const drag = useRef({
     id: -1,
@@ -407,9 +448,12 @@ const Projects = ({ heroHole }: ProjectsProps) => {
       id="projects"
       ref={sectionRef}
       onKeyDown={onKeyDown}
-      className="relative h-[calc(100svh-5rem)]"
+      className="relative"
+      style={{
+        height: `calc(100svh - 5rem + ${LAST * SCROLL_PER_PROJECT}svh)`,
+      }}
     >
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="sticky top-20 flex h-[calc(100svh-5rem)] flex-col overflow-hidden">
         {/* Header. z-10 keeps it above the black hole as it flies in. */}
         <div className="relative z-10 mx-auto w-full max-w-6xl shrink-0 px-6 pt-6 sm:pt-10">
           <div className="flex items-end justify-between border-b border-white/10 pb-5">
@@ -428,7 +472,7 @@ const Projects = ({ heroHole }: ProjectsProps) => {
                 <span>{pad(LAST)}</span>
               </div>
               <p className="mt-1 hidden font-mono text-[10px] uppercase tracking-[0.3em] text-gray-600 sm:block">
-                Drag or scroll sideways
+                Scroll down or sideways
               </p>
             </div>
           </div>
@@ -438,7 +482,7 @@ const Projects = ({ heroHole }: ProjectsProps) => {
         <div
           ref={stageRef}
           role="group"
-          aria-label="Projects, drag or scroll sideways to turn"
+          aria-label="Projects, scroll down or sideways to turn"
           className="relative isolate min-h-0 flex-1 cursor-grab touch-pan-y select-none active:cursor-grabbing"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}

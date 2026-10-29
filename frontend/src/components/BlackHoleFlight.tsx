@@ -26,13 +26,13 @@ interface BlackHoleFlightProps {
   /** 16:9 marker where the hole rests at the top of the page. */
   from?: RefObject<HTMLElement | null>;
   /**
-   * 16:9 marker where it docks, inside a stage that comes to rest at `landTop`.
+   * 16:9 marker where it docks, inside a sticky stage that pins at `landTop`.
    * Render the flight as a direct child of that (positioned) stage too.
    */
   to: RefObject<HTMLElement | null>;
   /**
    * Section holding the stage. The flight runs while its top rises from the
-   * bottom of the screen to `landTop`, i.e. until the stage has landed.
+   * bottom of the screen to `landTop`, i.e. until the stage pins.
    */
   landing: RefObject<HTMLElement | null>;
   landTop: number;
@@ -43,7 +43,7 @@ interface BlackHoleFlightProps {
 
 /**
  * One black hole shared by two sections. It rests at `from`; as the page
- * scrolls it shrinks away into `to`, landing just as the stage reaches `landTop`.
+ * scrolls it shrinks away into `to`, landing just as the stage pins.
  * Scrolling back up flies it home again.
  *
  * In flight it is pinned to the screen; docked, it sits in the stage and
@@ -81,7 +81,7 @@ const BlackHoleFlight = ({
 
       const vh = window.innerHeight;
       const travel = Math.max(vh - landTop, 1);
-      // 0 until the landing section peeks over the fold, 1 once it has landed.
+      // 0 until the landing section peeks over the fold, 1 once it has pinned.
       const p = clamp01((vh - track.getBoundingClientRect().top) / travel);
       const docked = still ? p >= SETTLE : p >= 1;
 
@@ -93,7 +93,7 @@ const BlackHoleFlight = ({
         pose = poseOf(origin);
       } else {
         // Both ends held where they rest on screen: the origin as it was
-        // before the page moved, the dock as it will be once landed.
+        // before the page moved, the dock as it will be once pinned.
         const start = poseOf(origin, p * travel);
         const end = poseOf(dock, -(1 - p) * travel);
         const t = p * p * (3 - 2 * p);

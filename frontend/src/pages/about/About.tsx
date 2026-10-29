@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { KeyboardEvent, PointerEvent, TouchEvent } from "react";
+import type { KeyboardEvent, PointerEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   motion,
+  useMotionValue,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -26,15 +28,17 @@ const END_PULL_PX = 100;
 const WHEEL_GAP_MS = 250;
 // Finger travel past the end that carries on to Contact.
 const END_SWIPE_PX = 60;
-// Mouse travel before a press turns into a drag.
-const DRAG_SLOP = 5;
-// Fraction of the track's width the arrow buttons scroll by.
+// Pointer travel before a press turns into a drag.
+const DRAG_SLOP = 6;
+// Fraction of the screen's width the arrow buttons slide the track by.
 const PAGE_SHARE = 0.8;
-// Sub-pixel slack when deciding whether the track is at an edge.
-const EDGE_SLACK = 2;
+// Per-millisecond decay of a fling's speed once the pointer lets go.
+const FLING_FRICTION = 0.995;
+// A fling stops once it slows below this, in px per ms.
+const FLING_MIN_SPEED = 0.02;
 
-// Sized by height so header, photos and captions fit in one screen on short
-// viewports too; the px caps are the sizes used on tall ones.
+// Sized by height so header, photos and captions fit the pinned screen on
+// short viewports too; the px caps are the sizes used on tall ones.
 const sizeMap: SizeMap = {
   sm: "h-[min(36svh,293px)] sm:h-[min(38svh,347px)] aspect-[3/4]",
   md: "h-[min(46svh,375px)] sm:h-[min(48svh,450px)] aspect-[4/5]",
@@ -48,12 +52,6 @@ const alignMap: AlignMap = {
 };
 
 type Edge = "start" | "middle" | "end";
-
-const atEnd = (el: HTMLElement) =>
-  el.scrollLeft >= el.scrollWidth - el.clientWidth - EDGE_SLACK;
-
-const edgeOf = (el: HTMLElement): Edge =>
-  el.scrollLeft <= EDGE_SLACK ? "start" : atEnd(el) ? "end" : "middle";
 
 interface PanelProps<T> {
   panel: T;
@@ -134,7 +132,7 @@ const Photo = ({ panel, index, progress, still }: PanelProps<PhotoPanel>) => {
   );
 };
 
-// Last stop on the track: what sideways scrolling past the end carries on to.
+// Last stop on the track: what scrolling on past the end carries on to.
 const EndCap = ({ onContinue }: { onContinue: () => void }) => (
   <div className="shrink-0 w-60 sm:w-80 self-center">
     <button
@@ -157,214 +155,308 @@ const arrowButton =
   "flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:pointer-events-none disabled:opacity-30";
 
 const About = () => {
-  const scrollerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const still = useReducedMotion() ?? false;
   const [edge, setEdge] = useState<Edge>("start");
 
-  const { scrollXProgress } = useScroll({ container: scrollerRef });
+  // Scrolling down slides the track: the section pins for its whole height
+  // and the page scroll through it is the track's position.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  // How far the track must slide to bring its last panel into view.
+  const maxX = useMotionValue(0);
+  const x = useTransform(
+    [scrollYProgress, maxX],
+    ([p, max]: number[]) => -p * max,
+  );
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const measure = () =>
+      maxX.set(Math.max(track.scrollWidth - window.innerWidth, 0));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [maxX]);
+
+  useMotionValueEvent(scrollYProgress, "change", (p) =>
+    setEdge(p <= 0.001 ? "start" : p >= 0.999 ? "end" : "middle"),
+  );
 
   const goToContact = useCallback(() => navigate("/contact"), [navigate]);
 
+  // The stretch of page scroll the track slides over, and how much page scroll
+  // moves it by one pixel.
+  const span = useCallback(() => {
+    const section = sectionRef.current;
+    const max = maxX.get();
+    if (!section || max <= 0) return null;
+    const start = section.getBoundingClientRect().top + window.scrollY;
+    const end = start + section.offsetHeight - window.innerHeight;
+    return end > start ? { start, end, perPx: (end - start) / max } : null;
+  }, [maxX]);
+
+  const atEnd = useCallback(() => {
+    const s = span();
+    return s !== null && window.scrollY >= s.end - 1;
+  }, [span]);
+
+  // Sideways input slides the track `dx` px (positive = on toward the end) by
+  // scrolling the page, so it moves exactly as scrolling down would and the two
+  // never disagree. It stops at either end of the track instead of scrolling on
+  // into Skills or Contact, and returns how much of a forward push was left
+  // over past the end.
+  const slide = useCallback(
+    (dx: number) => {
+      const s = span();
+      if (!s) return 0;
+      const y = window.scrollY;
+      const next =
+        dx < 0
+          ? Math.max(y + dx * s.perPx, Math.min(y, s.start))
+          : Math.min(y + dx * s.perPx, Math.max(y, s.end));
+      if (next !== y) window.scrollTo({ top: next, behavior: "instant" });
+      return dx > 0 ? dx - (next - y) / s.perPx : 0;
+    },
+    [span],
+  );
+
+  // A drag keeps coasting after the pointer lets go, like a native swipe.
+  const flingFrame = useRef(0);
+
+  const fling = (velocity: number) => {
+    cancelAnimationFrame(flingFrame.current);
+    if (still) return;
+    let v = velocity;
+    let last = performance.now();
+    const step = (now: number) => {
+      const dt = now - last;
+      last = now;
+      v *= FLING_FRICTION ** dt;
+      if (Math.abs(v) < FLING_MIN_SPEED) return;
+      const before = window.scrollY;
+      slide(v * dt);
+      if (window.scrollY === before) return; // ran into an end
+      flingFrame.current = requestAnimationFrame(step);
+    };
+    flingFrame.current = requestAnimationFrame(step);
+  };
+
+  useEffect(() => () => cancelAnimationFrame(flingFrame.current), []);
+
+  // Trackpad swipes and shift + wheel. Vertical scrolling is left alone: it
+  // already slides the track. Sideways scrolling past the end carries on to
+  // Contact. Non-passive so a sideways swipe can't trigger the browser's back
+  // gesture.
   useEffect(() => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-
-    const update = () => setEdge(edgeOf(scroller));
-    update();
-    scroller.addEventListener("scroll", update, { passive: true });
-    const observer = new ResizeObserver(update);
-    observer.observe(scroller);
-
-    // Sideways scrolling past the end carries on down to Contact. The scroller
-    // already does the scrolling; this only watches for the push beyond it.
+    const section = sectionRef.current;
+    if (!section) return;
     let lastWheel = -Infinity;
     let startedAtEnd = false;
     let pulled = 0;
     const onWheel = (e: WheelEvent) => {
       const dx = horizontalWheelDelta(e);
-      if (dx === null) return; // vertical: the page scrolls on by itself
+      if (dx === null) return;
+      e.preventDefault();
+      cancelAnimationFrame(flingFrame.current);
       if (e.timeStamp - lastWheel > WHEEL_GAP_MS) {
-        startedAtEnd = atEnd(scroller);
+        startedAtEnd = atEnd();
         pulled = 0;
       }
       lastWheel = e.timeStamp;
-      if (!startedAtEnd || dx <= 0 || !atEnd(scroller)) {
-        pulled = 0;
+      const past = slide(dx);
+      if (!startedAtEnd || past <= 0) {
+        if (dx < 0) pulled = 0;
         return;
       }
-      pulled += dx;
+      pulled += past;
       if (pulled >= END_PULL_PX) {
         startedAtEnd = false;
         goToContact();
       }
     };
-    scroller.addEventListener("wheel", onWheel, { passive: true });
+    section.addEventListener("wheel", onWheel, { passive: false });
+    return () => section.removeEventListener("wheel", onWheel);
+  }, [slide, atEnd, goToContact]);
 
-    return () => {
-      scroller.removeEventListener("scroll", update);
-      scroller.removeEventListener("wheel", onWheel);
-      observer.disconnect();
-    };
-  }, [goToContact]);
-
-  // Touch: a swipe that starts at the end and keeps heading that way.
-  const touch = useRef({ x: 0, y: 0, startedAtEnd: false });
-
-  const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
-    const t = e.touches[0];
-    touch.current = {
-      x: t.clientX,
-      y: t.clientY,
-      startedAtEnd: atEnd(e.currentTarget),
-    };
-  };
-
-  const onTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
-    const start = touch.current;
-    if (!start.startedAtEnd) return;
-    start.startedAtEnd = false;
-    const t = e.changedTouches[0];
-    const dx = start.x - t.clientX;
-    const dy = Math.abs(start.y - t.clientY);
-    if (dx >= END_SWIPE_PX && dx > dy * 1.5) goToContact();
-  };
-
-  // A mouse has no sideways wheel, so let it drag the track like a finger would.
-  const mouse = useRef<{
-    id: number;
-    x: number;
-    left: number;
-    dragging: boolean;
-  } | null>(null);
+  // Dragging the track sideways with a finger or a mouse. The track is
+  // touch-action: pan-y, so a vertical swipe still scrolls the page natively
+  // (sliding the track) and only sideways moves reach us.
+  const drag = useRef({
+    id: -1,
+    startX: 0,
+    lastX: 0,
+    lastT: 0,
+    velocity: 0, // px per ms, smoothed
+    dragging: false,
+    startedAtEnd: false,
+    pulled: 0,
+  });
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType !== "mouse" || e.button !== 0) return;
-    mouse.current = {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    cancelAnimationFrame(flingFrame.current);
+    drag.current = {
       id: e.pointerId,
-      x: e.clientX,
-      left: e.currentTarget.scrollLeft,
+      startX: e.clientX,
+      lastX: e.clientX,
+      lastT: e.timeStamp,
+      velocity: 0,
       dragging: false,
+      startedAtEnd: atEnd(),
+      pulled: 0,
     };
   };
 
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
-    const m = mouse.current;
-    if (!m || e.pointerId !== m.id) return;
-    const dx = e.clientX - m.x;
-    if (!m.dragging) {
-      if (Math.abs(dx) < DRAG_SLOP) return;
-      m.dragging = true;
+    const d = drag.current;
+    if (e.pointerId !== d.id) return;
+    if (!d.dragging) {
+      if (Math.abs(e.clientX - d.startX) < DRAG_SLOP) return;
+      d.dragging = true;
       e.currentTarget.setPointerCapture(e.pointerId);
-      e.currentTarget.dataset.dragging = "true";
     }
-    e.currentTarget.scrollLeft = m.left - dx;
+    const dx = e.clientX - d.lastX;
+    const dt = Math.max(e.timeStamp - d.lastT, 1);
+    d.velocity = 0.7 * d.velocity + 0.3 * (dx / dt);
+    d.lastX = e.clientX;
+    d.lastT = e.timeStamp;
+    // The track follows the pointer: dragging left moves it on.
+    const past = slide(-dx);
+    if (d.startedAtEnd && past > 0) d.pulled += past;
+    else if (dx > 0) d.pulled = 0;
   };
 
   const onPointerEnd = (e: PointerEvent<HTMLDivElement>) => {
-    const m = mouse.current;
-    if (!m || e.pointerId !== m.id) return;
-    mouse.current = null;
-    e.currentTarget.dataset.dragging = "false";
-  };
-
-  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    // The scroller already handles the arrows; once it is at the end, one more
-    // press carries on.
-    if (e.key === "ArrowRight" && !e.repeat && atEnd(e.currentTarget)) {
-      e.preventDefault();
+    const d = drag.current;
+    if (e.pointerId !== d.id) return;
+    d.id = -1;
+    if (!d.dragging) return;
+    d.dragging = false;
+    if (d.startedAtEnd && d.pulled >= END_SWIPE_PX) {
       goToContact();
+      return;
     }
+    // A pointer that stopped before letting go carries no momentum.
+    if (e.timeStamp - d.lastT <= 80) fling(-d.velocity);
   };
 
+  // The arrow buttons (and arrow keys) step the track a screen at a time; past
+  // the end they carry on to Contact.
   const page = (direction: 1 | -1) => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    scroller.scrollBy({
-      left: direction * scroller.clientWidth * PAGE_SHARE,
-      behavior: still ? "auto" : "smooth",
-    });
+    if (direction > 0 && atEnd()) {
+      goToContact();
+      return;
+    }
+    const s = span();
+    if (!s) return;
+    const y = window.scrollY;
+    const step = window.innerWidth * PAGE_SHARE * s.perPx;
+    const top =
+      direction < 0
+        ? Math.max(y - step, Math.min(y, s.start))
+        : Math.min(y + step, Math.max(y, s.end));
+    window.scrollTo({ top, behavior: still ? "auto" : "smooth" });
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      page(1);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      page(-1);
+    }
   };
 
   return (
     <section
       id="about"
-      className="relative my-24 flex min-h-[calc(100svh-5rem)] flex-col justify-center py-4"
+      ref={sectionRef}
+      onKeyDown={onKeyDown}
+      className="relative h-[300vh] my-24"
     >
-      {/* Header */}
-      <div className="max-w-6xl mx-auto w-full px-6 shrink-0 flex items-end justify-between gap-6">
-        <div>
-          <span className="font-mono text-xs tracking-[0.25em] uppercase text-red-500">
-            Who I am
-          </span>
-          <h2 className="mt-3 text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
-            Christian Neal Paredes
-          </h2>
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden pt-24 pb-8">
+        {/* Header */}
+        <div className="max-w-6xl mx-auto w-full px-6 mb-10 shrink-0 flex items-end justify-between gap-6">
+          <div>
+            <span className="font-mono text-xs tracking-[0.25em] uppercase text-red-500">
+              Who I am
+            </span>
+            <h2 className="mt-3 text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+              Christian Neal Paredes
+            </h2>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => page(-1)}
+              disabled={edge === "start"}
+              aria-label="Scroll back"
+              className={arrowButton}
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => page(1)}
+              aria-label={
+                edge === "end" ? "Continue to contact" : "Scroll forward"
+              }
+              className={arrowButton}
+            >
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => page(-1)}
-            disabled={edge === "start"}
-            aria-label="Scroll back"
-            className={arrowButton}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={edge === "end" ? goToContact : () => page(1)}
-            aria-label={edge === "end" ? "Continue to contact" : "Scroll forward"}
-            className={arrowButton}
-          >
-            <ArrowRight className="h-4 w-4" />
-          </button>
+
+        <motion.div
+          ref={trackRef}
+          className="flex items-stretch gap-8 sm:gap-16 px-6 sm:px-12 will-change-transform cursor-grab touch-pan-y select-none active:cursor-grabbing"
+          style={{ x }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerEnd}
+          onPointerCancel={onPointerEnd}
+        >
+          {panels.map((panel, i) =>
+            panel.type === "quote" ? (
+              <Quote
+                key={i}
+                panel={panel}
+                index={i}
+                progress={scrollYProgress}
+                still={still}
+              />
+            ) : (
+              <Photo
+                key={i}
+                panel={panel}
+                index={i}
+                progress={scrollYProgress}
+                still={still}
+              />
+            ),
+          )}
+          <EndCap onContinue={goToContact} />
+        </motion.div>
+
+        <div className="max-w-6xl mx-auto w-full px-6 mt-8 shrink-0">
+          <p className="font-mono text-xs text-gray-600">
+            ↓ keep scrolling, down or sideways
+          </p>
         </div>
-      </div>
-
-      {/* Sideways track. The vertical padding leaves room for the frames to
-          bob without the scroller clipping them. */}
-      <div
-        ref={scrollerRef}
-        role="region"
-        aria-label="About me, scroll sideways"
-        tabIndex={0}
-        data-dragging="false"
-        onKeyDown={onKeyDown}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerEnd}
-        onPointerCancel={onPointerEnd}
-        className="mt-2 flex items-stretch gap-8 sm:gap-16 overflow-x-auto overflow-y-hidden overscroll-x-contain px-6 py-10 sm:px-12 cursor-grab select-none data-[dragging=true]:cursor-grabbing focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-500/60 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {panels.map((panel, i) =>
-          panel.type === "quote" ? (
-            <Quote
-              key={i}
-              panel={panel}
-              index={i}
-              progress={scrollXProgress}
-              still={still}
-            />
-          ) : (
-            <Photo
-              key={i}
-              panel={panel}
-              index={i}
-              progress={scrollXProgress}
-              still={still}
-            />
-          ),
-        )}
-        <EndCap onContinue={goToContact} />
-      </div>
-
-      <div className="max-w-6xl mx-auto w-full px-6 shrink-0">
-        <p className="font-mono text-xs text-gray-600">
-          ↔ scroll sideways · ↓ scroll down to move on
-        </p>
       </div>
     </section>
   );
