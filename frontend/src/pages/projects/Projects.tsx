@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { KeyboardEvent, RefObject } from "react";
+import type {
+  KeyboardEvent,
+  MouseEvent,
+  PointerEvent,
+  RefObject,
+} from "react";
 import {
   AnimatePresence,
   motion,
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
-  useScroll,
   useSpring,
   useTransform,
 } from "framer-motion";
@@ -16,17 +20,15 @@ import { FaGithub } from "react-icons/fa";
 import projects from "../../data/projects";
 import BlackHoleFlight from "../../components/BlackHoleFlight";
 import ProjectModal from "../../components/ProjectModal";
+import { horizontalWheelDelta } from "../../utils/wheel";
 import type { Project } from "../../types/index.ts";
 
-const LAST = projects.length - 1;
-const STEP = (Math.PI * 2) / projects.length;
+const COUNT = projects.length;
+const LAST = COUNT - 1;
+const STEP = (Math.PI * 2) / COUNT;
 
-// Matches the h-20 navbar the pinned stage sits under.
+// Matches the h-20 navbar the section sits under.
 const NAV_HEIGHT = 80;
-// Viewport heights of scrolling it takes to bring the next project around.
-const SCROLL_PER_PROJECT = 55;
-// Share of each project's scroll segment spent parked at the front.
-const HOLD = 0.4;
 // Elevation the orbit is viewed from; the black hole camera uses the same.
 const ORBIT_TILT = 0.22;
 // The hero views the black hole from lower down; the camera swings up from
@@ -34,19 +36,28 @@ const ORBIT_TILT = 0.22;
 const HERO_TILT = 0.12;
 const MAX_TAGS = 8;
 
+// Horizontal wheel travel that turns the orbit by one project.
+const WHEEL_PX_PER_PROJECT = 500;
+// Quiet time after the last wheel event before the orbit glides to a stop.
+const SETTLE_MS = 120;
+// Share of a project that input has to travel to count as a move. Below it the
+// orbit eases back; at or above it the orbit always moves at least one project.
+const FLICK = 0.12;
+// Pointer travel before a press turns into a drag instead of a click.
+const DRAG_SLOP = 6;
+// How far past the release point a fling carries the orbit.
+const FLING_MS = 160;
+
 const clamp = (v: number, min: number, max: number) =>
   Math.min(Math.max(v, min), max);
 
-const pad = (n: number) => String(n + 1).padStart(2, "0");
+const mod = (n: number, m: number) => ((n % m) + m) % m;
 
-// Scroll progress -> orbit position. Plateaus at every whole number, so each
-// project parks at the front for a beat before the orbit swings on.
-const toOrbit = (progress: number) => {
-  const f = clamp(progress, 0, 1) * LAST;
-  const i = Math.floor(f);
-  const t = clamp((f - i - HOLD / 2) / (1 - HOLD), 0, 1);
-  return i + t * t * (3 - 2 * t);
-};
+// Signed shortest way round the ring from slot `from` to slot `to`.
+const ringDelta = (to: number, from: number) =>
+  mod(to - from + COUNT / 2, COUNT) - COUNT / 2;
+
+const pad = (n: number) => String(n + 1).padStart(2, "0");
 
 // Where a card sits when it is `offset` slots away from the front of the
 // orbit. cos = 1 is nearest the viewer, -1 is the far side behind the hole.
@@ -147,9 +158,13 @@ interface SegmentProps {
   onSelect: (index: number) => void;
 }
 
-// One slice of the progress bar; fills as the orbit sweeps toward its project.
+// One slice of the progress bar; lights up as the orbit sweeps toward its
+// project and fades as it moves on. The orbit loops, so there is no "filled so
+// far" -- only how close this project is to the front.
 const Segment = ({ index, orbit, onSelect }: SegmentProps) => {
-  const fill = useTransform(orbit, (o) => clamp(o - index + 1, 0, 1));
+  const fill = useTransform(orbit, (o) =>
+    clamp(1 - Math.abs(ringDelta(index, o)), 0, 1),
+  );
   return (
     <button
       type="button"
@@ -184,22 +199,21 @@ const Projects = ({ heroHole }: ProjectsProps) => {
   const holeRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 
-  // From the stage pinning under the navbar to the section's last pixel.
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: [`start ${NAV_HEIGHT}px`, "end end"],
-  });
-  const stepped = useTransform(scrollYProgress, toOrbit);
-  const smoothed = useSpring(stepped, {
+  // Where the orbit is headed. Never wrapped: every whole number puts a project
+  // at the front, and since the cards sit on a circle, running past the last
+  // one comes round to the first (and the other way for negative values).
+  const target = useMotionValue(0);
+  const smoothed = useSpring(target, {
     stiffness: 120,
     damping: 24,
     mass: 0.6,
   });
-  const orbit = reduceMotion ? stepped : smoothed;
+  const orbit = reduceMotion ? target : smoothed;
 
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
-  const activeRef = useRef(0);
+  // Unwrapped slot at the front, so `active` is its position on the ring.
+  const slotRef = useRef(0);
   // Project shown in the closer-look modal, if any.
   const [selected, setSelected] = useState<number | null>(null);
   const closeModal = useCallback(() => setSelected(null), []);
@@ -207,12 +221,12 @@ const Projects = ({ heroHole }: ProjectsProps) => {
   useMotionValueEvent(orbit, "change", (o) => {
     // Hysteresis: hand over only once the orbit is clearly past the midpoint,
     // or a spring settling on x.5 would flicker between two projects.
-    if (Math.abs(o - activeRef.current) < 0.6) return;
-    const next = clamp(Math.round(o), 0, LAST);
-    if (next === activeRef.current) return;
-    setDirection(next > activeRef.current ? 1 : -1);
-    activeRef.current = next;
-    setActive(next);
+    if (Math.abs(o - slotRef.current) < 0.6) return;
+    const next = Math.round(o);
+    if (next === slotRef.current) return;
+    setDirection(next > slotRef.current ? 1 : -1);
+    slotRef.current = next;
+    setActive(mod(next, COUNT));
   });
 
   const stageWidth = useMotionValue(0);
@@ -233,32 +247,154 @@ const Projects = ({ heroHole }: ProjectsProps) => {
     return () => observer.disconnect();
   }, [stageWidth, stageHeight]);
 
-  // The orbit is driven by scroll, so jumping to a project means scrolling to
-  // the point where it parks at the front.
-  const scrollToProject = useCallback(
-    (index: number) => {
-      const section = sectionRef.current;
-      if (!section) return;
-      const top =
-        section.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT;
-      const distance = section.offsetHeight - (window.innerHeight - NAV_HEIGHT);
-      window.scrollTo({
-        top: top + (clamp(index, 0, LAST) / LAST) * distance,
-        behavior: reduceMotion ? "auto" : "smooth",
-      });
+  // Sideways input spins the orbit freely while it arrives, then the orbit
+  // glides on to the nearest project once input stops. `burstFrom` is the slot
+  // the orbit rested on when the current burst began.
+  const burstFrom = useRef<number | null>(null);
+  const settleTimer = useRef(0);
+
+  const nudge = useCallback(
+    (delta: number) => {
+      if (burstFrom.current === null) {
+        burstFrom.current = Math.round(target.get());
+      }
+      target.set(target.get() + delta);
     },
-    [reduceMotion],
+    [target],
   );
+
+  // `lead` is extra travel to count, e.g. the momentum of a fling.
+  const settle = useCallback(
+    (lead = 0) => {
+      window.clearTimeout(settleTimer.current);
+      const from = burstFrom.current;
+      if (from === null) return;
+      burstFrom.current = null;
+      const travelled = target.get() + lead - from;
+      const slots =
+        Math.abs(travelled) < FLICK
+          ? 0
+          : Math.sign(travelled) * Math.max(1, Math.round(Math.abs(travelled)));
+      target.set(from + slots);
+    },
+    [target],
+  );
+
+  const goBy = useCallback(
+    (slots: number) => {
+      window.clearTimeout(settleTimer.current);
+      burstFrom.current = null;
+      target.set(Math.round(target.get()) + slots);
+    },
+    [target],
+  );
+
+  // Jump to a project by whichever way round the ring is shorter.
+  const goTo = useCallback(
+    (index: number) => {
+      const here = Math.round(target.get());
+      goBy(ringDelta(index, here));
+    },
+    [target, goBy],
+  );
+
+  // Trackpad swipes and shift + wheel. Vertical scrolling is left alone so it
+  // carries on down the page; the listener has to be non-passive only so that a
+  // sideways swipe doesn't also trigger the browser's back/forward gesture.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const onWheel = (e: WheelEvent) => {
+      const dx = horizontalWheelDelta(e);
+      if (dx === null) return;
+      e.preventDefault();
+      nudge(dx / WHEEL_PX_PER_PROJECT);
+      window.clearTimeout(settleTimer.current);
+      settleTimer.current = window.setTimeout(settle, SETTLE_MS);
+    };
+    section.addEventListener("wheel", onWheel, { passive: false });
+    return () => section.removeEventListener("wheel", onWheel);
+  }, [nudge, settle]);
+
+  useEffect(() => () => window.clearTimeout(settleTimer.current), []);
+
+  // Dragging the stage with a finger or a mouse. The stage is touch-action:
+  // pan-y, so a vertical swipe still scrolls the page and only sideways moves
+  // reach us. `moved` outlives the press so the click that follows a drag can
+  // be swallowed instead of opening the project underneath.
+  const drag = useRef({
+    id: -1,
+    startX: 0,
+    lastX: 0,
+    lastT: 0,
+    velocity: 0, // px per ms, smoothed
+    dragging: false,
+    moved: false,
+  });
+
+  // Pointer travel that turns the orbit by one project.
+  const pxPerProject = () => clamp(stageWidth.get() * 0.3, 140, 420);
+
+  const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    drag.current = {
+      id: e.pointerId,
+      startX: e.clientX,
+      lastX: e.clientX,
+      lastT: e.timeStamp,
+      velocity: 0,
+      dragging: false,
+      moved: false,
+    };
+  };
+
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (e.pointerId !== d.id) return;
+    if (!d.dragging) {
+      if (Math.abs(e.clientX - d.startX) < DRAG_SLOP) return;
+      d.dragging = true;
+      d.moved = true;
+      window.clearTimeout(settleTimer.current);
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+    const dx = e.clientX - d.lastX;
+    const dt = Math.max(e.timeStamp - d.lastT, 1);
+    d.velocity = 0.7 * d.velocity + 0.3 * (dx / dt);
+    d.lastX = e.clientX;
+    d.lastT = e.timeStamp;
+    // Content follows the pointer: dragging left brings the next project round.
+    nudge(-dx / pxPerProject());
+  };
+
+  const onPointerEnd = (e: PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (e.pointerId !== d.id) return;
+    d.id = -1;
+    if (!d.dragging) return;
+    d.dragging = false;
+    // A pointer that stopped before letting go carries no momentum.
+    const velocity = e.timeStamp - d.lastT > 80 ? 0 : d.velocity;
+    settle((-velocity * FLING_MS) / pxPerProject());
+  };
+
+  const onClickCapture = (e: MouseEvent<HTMLDivElement>) => {
+    if (!drag.current.moved) return;
+    drag.current.moved = false;
+    e.stopPropagation();
+    e.preventDefault();
+  };
 
   const onKeyDown = (e: KeyboardEvent<HTMLElement>) => {
     // The modal is portalled, but its key events still bubble through here.
     if (selected !== null) return;
-    if (e.key === "ArrowRight" && active < LAST) {
+    drag.current.moved = false;
+    if (e.key === "ArrowRight") {
       e.preventDefault();
-      scrollToProject(active + 1);
-    } else if (e.key === "ArrowLeft" && active > 0) {
+      goBy(1);
+    } else if (e.key === "ArrowLeft") {
       e.preventDefault();
-      scrollToProject(active - 1);
+      goBy(-1);
     }
   };
 
@@ -271,12 +407,9 @@ const Projects = ({ heroHole }: ProjectsProps) => {
       id="projects"
       ref={sectionRef}
       onKeyDown={onKeyDown}
-      className="relative"
-      style={{
-        height: `calc(100svh - 5rem + ${LAST * SCROLL_PER_PROJECT}svh)`,
-      }}
+      className="relative h-[calc(100svh-5rem)]"
     >
-      <div className="sticky top-20 flex h-[calc(100svh-5rem)] flex-col overflow-hidden">
+      <div className="flex h-full flex-col overflow-hidden">
         {/* Header. z-10 keeps it above the black hole as it flies in. */}
         <div className="relative z-10 mx-auto w-full max-w-6xl shrink-0 px-6 pt-6 sm:pt-10">
           <div className="flex items-end justify-between border-b border-white/10 pb-5">
@@ -295,14 +428,24 @@ const Projects = ({ heroHole }: ProjectsProps) => {
                 <span>{pad(LAST)}</span>
               </div>
               <p className="mt-1 hidden font-mono text-[10px] uppercase tracking-[0.3em] text-gray-600 sm:block">
-                Scroll to orbit
+                Drag or scroll sideways
               </p>
             </div>
           </div>
         </div>
 
         {/* Orbit stage */}
-        <div ref={stageRef} className="relative isolate min-h-0 flex-1">
+        <div
+          ref={stageRef}
+          role="group"
+          aria-label="Projects, drag or scroll sideways to turn"
+          className="relative isolate min-h-0 flex-1 cursor-grab touch-pan-y select-none active:cursor-grabbing"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerEnd}
+          onPointerCancel={onPointerEnd}
+          onClickCapture={onClickCapture}
+        >
           {/* Where the black hole docks at the centre of the orbit */}
           <div
             ref={holeRef}
@@ -411,19 +554,17 @@ const Projects = ({ heroHole }: ProjectsProps) => {
               <div className="flex items-center gap-3 lg:border-l lg:border-white/10 lg:pl-6">
                 <button
                   type="button"
-                  onClick={() => scrollToProject(active - 1)}
-                  disabled={active === 0}
+                  onClick={() => goBy(-1)}
                   aria-label="Previous project"
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:pointer-events-none disabled:opacity-30"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </button>
                 <button
                   type="button"
-                  onClick={() => scrollToProject(active + 1)}
-                  disabled={active === LAST}
+                  onClick={() => goBy(1)}
                   aria-label="Next project"
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:pointer-events-none disabled:opacity-30"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition-colors hover:border-red-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                   <ArrowRight className="h-4 w-4" />
                 </button>
@@ -437,7 +578,7 @@ const Projects = ({ heroHole }: ProjectsProps) => {
                 key={p.title}
                 index={i}
                 orbit={orbit}
-                onSelect={scrollToProject}
+                onSelect={goTo}
               />
             ))}
           </div>

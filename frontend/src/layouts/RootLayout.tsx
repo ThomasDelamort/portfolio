@@ -69,8 +69,7 @@ const RootLayout = () => {
       <Loader done={!loading} />
       <Starfield />
       <Navbar />
-      {/* clip, not hidden: hidden would make <main> a scroll container and
-          break the sticky, scroll-pinned sections inside it */}
+      {/* clip, not hidden: hidden would make <main> a scroll container */}
       <main className="overflow-x-clip">
         <Outlet />
       </main>
