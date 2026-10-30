@@ -1,0 +1,99 @@
+name: Backend CI/CD
+
+# CI: every PR and push touching the backend type-checks and compiles it.
+# CD: pushes to main (and manual runs) then deploy the backend to Render and
+# wait for the deploy to go live. Render's own auto-deploy is turned off in
+# render.yaml, so GitHub Actions is the only thing triggering deployments.
+#
+# Required repo secrets:
+#   RENDER_API_KEY     - Render dashboard > Account Settings > API Keys
+#   RENDER_SERVICE_ID  - the portfolio-backend service id (srv-...), visible in
+#                        its dashboard URL
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/render.yaml"
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/render.yaml"
+  workflow_dispatch:
+
+concurrency:
+  group: render-${{ github.ref }}
+  # Only supersede stale PR runs; never cancel a production deploy midway.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - run: npm ci
+
+      # `tsc` type-checks and compiles, so a broken build fails here
+      # instead of on Render.
+      - run: npm run build
+
+  deploy:
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Trigger Render deploy
+        id: trigger
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+        run: |
+          deploy_id=$(curl -fsS -X POST \
+            "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
+            -H "Authorization: Bearer ${RENDER_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "{\"commitId\": \"${GITHUB_SHA}\"}" | jq -r '.id')
+          echo "deploy_id=$deploy_id" >> "$GITHUB_OUTPUT"
+          echo "Triggered Render deploy $deploy_id for $GITHUB_SHA"
+
+      # Render only reports `live` once /api/health (healthCheckPath) passes.
+      - name: Wait for deploy to go live
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          DEPLOY_ID: ${{ steps.trigger.outputs.deploy_id }}
+        run: |
+          for i in $(seq 1 60); do
+            status=$(curl -fsS \
+              "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys/${DEPLOY_ID}" \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" | jq -r '.status')
+            echo "[$i] $DEPLOY_ID: $status"
+            case "$status" in
+              live)
+                echo "### Render deploy $DEPLOY_ID is live ($GITHUB_SHA)" >> "$GITHUB_STEP_SUMMARY"
+                exit 0
+                ;;
+              build_failed|update_failed|pre_deploy_failed|canceled|deactivated)
+                echo "::error::Render deploy $DEPLOY_ID ended as $status"
+                exit 1
+                ;;
+            esac
+            sleep 15
+          done
+          echo "::error::Timed out waiting for Render deploy $DEPLOY_ID"
+          exit 1

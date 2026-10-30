@@ -1,0 +1,30 @@
+# Render Blueprint for the backend. It lives in backend/, so set the
+# Blueprint's "Blueprint file path" to backend/render.yaml in Render.
+# (rootDir below is relative to the repo root, not to this file.)
+#
+# Deployed by .github/workflows/render.yaml (autoDeploy is off so Render
+# doesn't also deploy on every push). Secrets are set in the Render dashboard.
+services:
+  - type: web
+    name: portfolio-backend
+    runtime: node
+    rootDir: backend
+    # --include=dev because Render sets NODE_ENV=production, which would skip
+    # typescript; prune afterwards so the runtime only carries prod deps.
+    buildCommand: npm ci --include=dev && npm run build && npm prune --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: false
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_TO
+        sync: false

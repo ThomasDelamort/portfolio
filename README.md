@@ -38,7 +38,7 @@ keeps the URL and scroll position in sync as you navigate.
 - **Frontend:** React 19, TypeScript, Vite, React Router, Tailwind CSS 4, Framer Motion, React Icons, oxlint
 - **Backend:** Node.js, Express 5, TypeScript, node-postgres (`pg`), Resend, tsx
 - **Database:** PostgreSQL ([Neon](https://neon.tech) in production)
-- **Infra:** Docker (backend), deployed on [Render](https://render.com)
+- **Infra:** Node.js runtime on [Render](https://render.com), deployed via GitHub Actions
 
 ## Project structure
 
@@ -57,7 +57,7 @@ portfolio/
 │       ├── hooks/           # useScrollReveal, useSectionSync (syncs route <-> scroll position)
 │       └── types/
 └── backend/
-    ├── Dockerfile
+    ├── render.yaml          # Render Blueprint (Node runtime)
     └── src/
         ├── server.ts             # Express app, health/db-check routes
         ├── db.ts                 # pg Pool + table init
@@ -104,7 +104,6 @@ Other scripts (run inside `frontend/` or `backend/`):
 | Variable         | Description                                                   |
 | ---------------- | ------------------------------------------------------------- |
 | `DATABASE_URL`   | Postgres connection string                                    |
-| `PGSSL`          | Set when the DB requires SSL (e.g. Neon)                      |
 | `PORT`           | Port the API listens on                                       |
 | `NODE_ENV`       | `development` / `production` — controls SSL behavior for `pg` |
 | `CLIENT_ORIGIN`  | Allowed CORS origin for the frontend                          |
@@ -129,10 +128,23 @@ On startup the backend creates the `messages` table if it doesn't already exist.
 
 ## Deployment
 
-The backend ships as a multi-stage Docker image (`backend/Dockerfile`) — a
-build stage compiles TypeScript, and the production stage runs only the
-compiled output with production dependencies. Both services are deployed on
-[Render](https://render.com), with Neon as the managed Postgres provider.
+The backend runs on Render's native Node.js runtime (no Docker), defined in
+[`backend/render.yaml`](backend/render.yaml) (set the Render Blueprint's file
+path to `backend/render.yaml`): Render installs dependencies, compiles TypeScript
+with `npm run build`, and starts `dist/server.js`. Neon is the managed Postgres
+provider.
+
+Deployments are driven by GitHub Actions
+([`.github/workflows/render.yaml`](.github/workflows/render.yaml)):
+
+- **Pull requests / pushes** touching `backend/` run `npm ci` and `npm run build`.
+- **Pushes to `main`** then call the Render API to deploy that commit and wait
+  until `/api/health` passes and the deploy is live. Render's own auto-deploy is
+  disabled so there is a single deploy path.
+
+Required repo secrets: `RENDER_API_KEY` and `RENDER_SERVICE_ID` (the `srv-…` id
+from the backend service's dashboard URL). Runtime secrets (`DATABASE_URL`,
+`CLIENT_ORIGIN`, `RESEND_API_KEY`, `MAIL_TO`) are set in the Render dashboard.
 
 ## Author
 
