@@ -17,18 +17,21 @@ import {
   SiGnubash,
   SiRender,
   SiNeon,
-  // SiFastapi,
+  SiFastapi,
   SiClaudecode,
   SiClaude,
   SiSqlite,
   SiGooglegemini,
+  SiVercel,
+  SiNextdotjs 
 } from "react-icons/si";
-// FaAws
+
 // FaDocker
-import { FaJava, FaPython, FaCss3Alt } from "react-icons/fa";
+import { FaJava, FaPython, FaCss3Alt, FaAws } from "react-icons/fa";
 import { GrMysql, GrArchlinux } from "react-icons/gr";
 import { BiLogoCPlusPlus } from "react-icons/bi";
 import { TbBrandCSharp } from "react-icons/tb";
+import { FaGitlab } from "react-icons/fa6";
 
 import type { SkillGroup } from "../types/index.ts";
 
@@ -48,11 +51,17 @@ const skillGroups: SkillGroup[] = [
     skills: [
       { name: "Node.js", icon: SiNodedotjs },
       { name: "Express", icon: SiExpress },
-      // { name: "FastAPI", icon: SiFastapi },
-      // { name: "AWS", icon: FaAws },
+      { name: "FastAPI", icon: SiFastapi },
+      { name: "AWS", icon: FaAws },
       { name: "Clerk", icon: SiClerk },
       { name: "Cloudinary", icon: SiCloudinary },
     ],
+  },
+  {
+    category: "Fullstack",
+    skills: [
+      { name: "NextJS", icon: SiNextdotjs }
+    ]
   },
   {
     category: "Database",
@@ -69,10 +78,12 @@ const skillGroups: SkillGroup[] = [
     skills: [
       { name: "Git", icon: SiGit },
       { name: "GitHub", icon: SiGithub },
+      { name: "GitLab", icon: FaGitlab },
       // { name: "Docker", icon: FaDocker },
       { name: "Insomnia", icon: SiInsomnia },
       { name: "Vite", icon: SiVite },
       { name: "Render", icon: SiRender },
+      { name: "Vercel", icon: SiVercel },
       { name: "Arch Linux", icon: GrArchlinux },
     ],
   },
