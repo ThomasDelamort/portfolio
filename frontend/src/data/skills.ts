@@ -1,6 +1,5 @@
 import {
   SiReact,
-  SiJavascript,
   SiTailwindcss,
   SiBootstrap,
   SiHtml5,
@@ -23,14 +22,17 @@ import {
   SiSqlite,
   SiGooglegemini,
   SiVercel,
-  SiNextdotjs 
+
+  // SiNextdotjs
 } from "react-icons/si";
+import { BiLogoJavascript } from "react-icons/bi";
+import { BiLogoTypescript } from "react-icons/bi";
 
 // FaDocker
 import { FaJava, FaPython, FaCss3Alt, FaAws } from "react-icons/fa";
 import { GrMysql, GrArchlinux } from "react-icons/gr";
-import { BiLogoCPlusPlus } from "react-icons/bi";
-import { TbBrandCSharp } from "react-icons/tb";
+// import { BiLogoCPlusPlus } from "react-icons/bi";
+// import { TbBrandCSharp } from "react-icons/tb";
 import { FaGitlab } from "react-icons/fa6";
 
 import type { SkillGroup } from "../types/index.ts";
@@ -57,12 +59,12 @@ const skillGroups: SkillGroup[] = [
       { name: "Cloudinary", icon: SiCloudinary },
     ],
   },
-  {
-    category: "Fullstack",
-    skills: [
-      { name: "NextJS", icon: SiNextdotjs }
-    ]
-  },
+  // {
+  //   category: "Fullstack",
+  //   skills: [
+  //     { name: "NextJS", icon: SiNextdotjs }
+  //   ]
+  // },
   {
     category: "Database",
     skills: [
@@ -91,9 +93,10 @@ const skillGroups: SkillGroup[] = [
     category: "Programming Languages",
     skills: [
       { name: "Java", icon: FaJava },
-      { name: "JavaScript", icon: SiJavascript },
-      { name: "C#", icon: TbBrandCSharp },
-      { name: "C++", icon: BiLogoCPlusPlus },
+      { name: "JavaScript", icon: BiLogoJavascript },
+      { name: "TypeScript", icon: BiLogoTypescript },
+      // { name: "C#", icon: TbBrandCSharp },
+      // { name: "C++", icon: BiLogoCPlusPlus },
       { name: "Python", icon: FaPython },
       { name: "Bash", icon: SiGnubash },
     ],
